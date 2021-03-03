@@ -13,5 +13,13 @@ namespace Umator.Plugins.FTP.Tests
             var uri = UriHelper.Combine("umator.com", 121, "data", "file.txt");
             Console.WriteLine(uri);
         }
+
+        [TestMethod]
+        public void BuildPathTest()
+        {
+            var uri = UriHelper.BuildPath("Directory", "SubDirectory", "File.txt");
+            Assert.AreEqual("Directory/SubDirectory/File.txt", uri);
+            Console.WriteLine(uri);
+        }
     }
 }

@@ -34,5 +34,10 @@ namespace Umator.Plugins.FTP.Components
             return string.Join("/", new[] {baseURL.TrimEnd('/')}
                 .Concat(segments.Where(s=> !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim('/'))));
         }
+
+        public static string BuildPath(params string[] segments)
+        {
+            return string.Join("/", segments.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim('/')));
+        }
     }
 }

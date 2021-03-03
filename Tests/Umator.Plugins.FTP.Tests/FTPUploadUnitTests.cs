@@ -18,16 +18,18 @@ namespace Umator.Plugins.FTP.Tests
                 Host = "192.168.175.128",
                 Username = "user",
                 Password = "user",
+                DestinationFolderPath = "Data",
                 DestinationFileName = "renamed.txt",
             };
 
             string sourceFileName = Path.Combine(Path.GetTempPath(), "test.txt");
-            File.WriteAllText(sourceFileName, "Hello world!");
+            File.WriteAllText(sourceFileName, "Hello world! 2");
 
             var result =  action.Execute(ArgumentCollection.New()
                 .WithArgument(FtpUploadActionExecutionArgs.SourceFilePath, sourceFileName));
             Console.WriteLine(result.AttachedException);
             Assert.IsTrue(result.Result);
+            // File.Delete(sourceFileName);
         }
     }
 }

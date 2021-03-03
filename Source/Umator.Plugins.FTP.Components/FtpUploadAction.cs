@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Text;
+using FluentFTP;
 using Umator.Contract;
 using Umator.Contract.Services;
 
@@ -12,6 +13,8 @@ namespace Umator.Plugins.FTP.Components
         // private readonly ILoggingService _loggingService;
 
         private const int DEFAULT_FTP_PORT = 21;
+        private const string DEFAULT_TEMP_EXTENSION = "temp";
+
         public string Id { get; set; }
 
         /// <summary>
@@ -30,6 +33,8 @@ namespace Umator.Plugins.FTP.Components
         /// </value>
         [Argument(FtpUploadActionInstanceArgs.Port, true)] public int Port { get; set; } = DEFAULT_FTP_PORT;
 
+        
+
         /// <summary>
         /// Gets or sets the username.
         /// </summary>
@@ -47,14 +52,6 @@ namespace Umator.Plugins.FTP.Components
         [Argument(FtpUploadActionInstanceArgs.Password, true)] public string Password { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether [use binary].
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if [use binary]; otherwise, <c>false</c>.
-        /// </value>
-        [Argument(FtpUploadActionInstanceArgs.UseBinary, true)] public bool UseBinary { get; set; } = false;
-
-        /// <summary>
         /// Gets or sets the destination folder path.
         /// </summary>
         /// <value>
@@ -69,6 +66,8 @@ namespace Umator.Plugins.FTP.Components
         /// The name of the destination file.
         /// </value>
         [Argument(FtpUploadActionInstanceArgs.DestinationFileName, false)] public string DestinationFileName { get; set; }
+
+
 
         /// <summary>
         /// Executes the specified arguments.
@@ -89,8 +88,6 @@ namespace Umator.Plugins.FTP.Components
                     return ActionResult.Failed().WithAdditionInformation(ArgumentCollection.New().WithArgument("ERROR", $"File Not Exist : {sourceFilePath}"));
                 }
 
-                string uploadFileName = Path.GetFileName(sourceFilePath);
-
                 if (string.IsNullOrWhiteSpace(Host))
                     return ActionResult.Failed().WithAdditionInformation(ArgumentCollection.New().WithArgument("ERROR", $"Missing Instance Argument {FtpUploadActionInstanceArgs.Host}"));
 
@@ -100,52 +97,23 @@ namespace Umator.Plugins.FTP.Components
                 if (string.IsNullOrWhiteSpace(Password))
                     return ActionResult.Failed().WithAdditionInformation(ArgumentCollection.New().WithArgument("ERROR", $"Missing Instance Argument {FtpUploadActionInstanceArgs.Password}"));
 
-                var uri = UriHelper.Combine(Host, Port > 0 ? Port : DEFAULT_FTP_PORT, DestinationFolderPath, uploadFileName);
-
-                
-                // Get the object used to communicate with the server.
-                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(uri);
-                // request.EnableSsl = true;
-                //if (!string.IsNullOrWhiteSpace(DestinationFileName))
-                //    request.RenameTo = DestinationFileName;
-
-                request.Method = WebRequestMethods.Ftp.UploadFile;
-                
-                // This example assumes the FTP site uses anonymous logon.
-                request.Credentials = new NetworkCredential(Username, Password);
-
-                // Copy the contents of the file to the request stream.
-                byte[] fileContents;
-                using (StreamReader sourceStream = new StreamReader(sourceFilePath))
+                using (FtpClient ftpClient = new FtpClient(Host, Port, Username, Password))
                 {
-                    fileContents = Encoding.UTF8.GetBytes(sourceStream.ReadToEnd());
-                }
+                    // Create temporary file name for uploading the file
+                    string uploadTempFileName =
+                        $"{Path.GetFileNameWithoutExtension(sourceFilePath)}.{DEFAULT_TEMP_EXTENSION}";
+                    var tempRemotePath = UriHelper.BuildPath(DestinationFolderPath, uploadTempFileName);
 
-                request.ContentLength = fileContents.Length;
-                
-                using (Stream requestStream = request.GetRequestStream())
-                {
-                    
-                    requestStream.Write(fileContents, 0, fileContents.Length);
-                }
+                    // Upload the file
+                    ftpClient.UploadFile(sourceFilePath, tempRemotePath, FtpRemoteExists.Overwrite, true);
+                    // Rename file after upload
+                    string finalFileName = string.IsNullOrWhiteSpace(DestinationFileName)
+                        ? Path.GetFileName(sourceFilePath)
+                        : DestinationFileName;
 
-                using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
-                {
-                    Console.WriteLine($"Upload File Complete, status {response.StatusDescription}");
+                    string finalRemotePath = UriHelper.BuildPath(DestinationFolderPath, finalFileName);
+                    ftpClient.Rename(tempRemotePath, finalRemotePath);
                 }
-
-                //if (!string.IsNullOrWhiteSpace(DestinationFileName))
-                //{
-                //    using (Stream requestStream = request.GetRequestStream())
-                //    {
-                //        request.RenameTo = DestinationFileName;
-                //    }
-                    
-                //    using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
-                //    {
-                //        Console.WriteLine($"Rename File Complete, status {response.StatusDescription}");
-                //    }
-                //}
 
                 return ActionResult.Succeeded();
             }
@@ -155,7 +123,31 @@ namespace Umator.Plugins.FTP.Components
                 return ActionResult.Failed().WithException(exception);
             }
         }
+
+        private bool RenameFile(string remoteFileUri, string renameTo)
+        {
+            try
+            {
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(remoteFileUri);
+                request.Credentials = new NetworkCredential(Username, Password);
+                request.Method = WebRequestMethods.Ftp.Rename;
+                request.RenameTo = renameTo;
+                using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
+                {
+                    // TODO : Use logging service
+                    Console.WriteLine($"Upload File Complete, status {response.StatusDescription}");
+                }
+
+                return true;
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+                return false;
+            }
+        }
     }
+
 
     public static class FtpUploadActionInstanceArgs
     {
