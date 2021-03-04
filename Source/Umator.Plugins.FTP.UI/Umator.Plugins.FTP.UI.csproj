@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Umator.Plugins.FTP.Components\Umator.Plugins.FTP.Components.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Umator.Contract">
       <HintPath>..\..\Libs\Shared\Umator.Contract.dll</HintPath>
 	    <Private>false</Private>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -8,9 +9,12 @@ using Umator.Contract.Services;
 
 namespace Umator.Plugins.FTP.Components
 {
+    [PluginItemInfo(ComponentUniqueId, "FTP Uploader",
+         "Upload a File to remote host via FTP"),
+     ExecutionArgumentsClass(typeof(FtpUploadActionExecutionArgs))]
     public class FtpUploadAction: IAction
     {
-        // private readonly ILoggingService _loggingService;
+        public const string ComponentUniqueId = "D911DBBC-22D2-4E85-8880-D50D8618B049";
 
         private const int DEFAULT_FTP_PORT = 21;
         private const string DEFAULT_TEMP_EXTENSION = "temp";
@@ -67,7 +71,50 @@ namespace Umator.Plugins.FTP.Components
         /// </value>
         [Argument(FtpUploadActionInstanceArgs.DestinationFileName, false)] public string DestinationFileName { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether [use local temporary extension].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [use local temporary extension]; otherwise, <c>false</c>.
+        /// </value>
+        [Argument(FtpUploadActionInstanceArgs.UseLocalTemporaryExtension, false)]  public bool UseLocalTemporaryExtension { get; set; } = false;
+        /// <summary>
+        /// Gets or sets the local temporary extension.
+        /// </summary>
+        /// <value>
+        /// The local temporary extension.
+        /// </value>
+        [Argument(FtpUploadActionInstanceArgs.LocalTemporaryExtension, false)] public string LocalTemporaryExtension { get; set; } = DEFAULT_TEMP_EXTENSION;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether [use remote temporary extension].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [use remote temporary extension]; otherwise, <c>false</c>.
+        /// </value>
+        [Argument(FtpUploadActionInstanceArgs.UseRemoteTemporaryExtension, false)] public bool UseRemoteTemporaryExtension { get; set; } = false;
+        /// <summary>
+        /// Gets or sets the remote temporary extension.
+        /// </summary>
+        /// <value>
+        /// The remote temporary extension.
+        /// </value>
+        [Argument(FtpUploadActionInstanceArgs.RemoteTemporaryExtension, false)] public string RemoteTemporaryExtension { get; set; } = DEFAULT_TEMP_EXTENSION;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="FtpUploadAction"/> is overwrite.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if overwrite; otherwise, <c>false</c>.
+        /// </value>
+        [Argument(FtpUploadActionInstanceArgs.Overwrite, false)] public bool Overwrite { get; set; }
+        /// <summary>
+        /// Gets or sets a value indicating whether [create remote directory].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [create remote directory]; otherwise, <c>false</c>.
+        /// </value>
+        [Argument(FtpUploadActionInstanceArgs.CreateRemoteDirectory, false)] public bool CreateRemoteDirectory { get; set; }
 
         /// <summary>
         /// Executes the specified arguments.
@@ -76,44 +123,108 @@ namespace Umator.Plugins.FTP.Components
         /// <returns></returns>
         public ActionResult Execute(ArgumentCollection arguments)
         {
+            // string uploadFileName = null; // , sourceFilePath = null;
             try
             {
-                if(!arguments.HasArgument(FtpUploadActionExecutionArgs.SourceFilePath) || string.IsNullOrWhiteSpace(arguments.GetValue<string>(FtpUploadActionExecutionArgs.SourceFilePath)))
-                    return ActionResult.Failed().WithAdditionInformation(ArgumentCollection.New().WithArgument("ERROR", $"Missing Execution Argument {FtpUploadActionExecutionArgs.SourceFilePath}"));
 
-                var sourceFilePath = arguments.GetValue<string>(FtpUploadActionExecutionArgs.SourceFilePath);
-                if (!File.Exists(sourceFilePath))
+                // Must provide arguments
+                if (arguments == null)
+                    throw new ArgumentNullException(nameof(arguments));
+
+                if (!arguments.HasArgument(FtpUploadActionExecutionArgs.SourceFilesCollection))
+                    throw new MissingArgumentException(FtpUploadActionExecutionArgs.SourceFilesCollection);
+
+                if (!(arguments[FtpUploadActionExecutionArgs.SourceFilesCollection] is List<string> filePaths))
+                    throw new ArgumentsValidationException(
+                        $"unable to cast argument value into list of string. key({FtpUploadActionExecutionArgs.SourceFilesCollection})");
+
+
+                foreach (var sourceFilePath in filePaths)
                 {
-                    // File not found 
-                    return ActionResult.Failed().WithAdditionInformation(ArgumentCollection.New().WithArgument("ERROR", $"File Not Exist : {sourceFilePath}"));
+                    string uploadFileName = null;
+                    try
+                    {
+                        if (!File.Exists(sourceFilePath))
+                        {
+                            // File not found 
+                            return ActionResult.Failed().WithAdditionInformation(ArgumentCollection.New()
+                                .WithArgument("ERROR", $"File Not Exist : {sourceFilePath}"));
+                        }
+
+                        if (string.IsNullOrWhiteSpace(Host))
+                            return ActionResult.Failed().WithAdditionInformation(ArgumentCollection.New()
+                                .WithArgument("ERROR",
+                                    $"Missing Instance Argument {FtpUploadActionInstanceArgs.Host}"));
+
+                        if (string.IsNullOrWhiteSpace(Username))
+                            return ActionResult.Failed().WithAdditionInformation(ArgumentCollection.New()
+                                .WithArgument("ERROR",
+                                    $"Missing Instance Argument {FtpUploadActionInstanceArgs.Username}"));
+
+                        if (string.IsNullOrWhiteSpace(Password))
+                            return ActionResult.Failed().WithAdditionInformation(ArgumentCollection.New()
+                                .WithArgument("ERROR",
+                                    $"Missing Instance Argument {FtpUploadActionInstanceArgs.Password}"));
+
+                        uploadFileName = sourceFilePath;
+                        if (UseLocalTemporaryExtension && !string.IsNullOrWhiteSpace(LocalTemporaryExtension))
+                        {
+                            uploadFileName =
+                                Path.ChangeExtension(sourceFilePath, LocalTemporaryExtension.TrimStart('.'));
+                            File.Move(sourceFilePath, uploadFileName);
+                        }
+
+                        string uploadRemoteFileName = null;
+                        if (UseRemoteTemporaryExtension && !string.IsNullOrWhiteSpace(RemoteTemporaryExtension))
+                        {
+                            if (!string.IsNullOrWhiteSpace(DestinationFileName))
+                            {
+                                uploadRemoteFileName =
+                                    $"{Path.ChangeExtension(DestinationFileName, null)}.{RemoteTemporaryExtension.TrimStart('.')}";
+                            }
+                            else
+                            {
+                                uploadRemoteFileName =
+                                    $"{Path.GetFileNameWithoutExtension(sourceFilePath)}.{RemoteTemporaryExtension.TrimStart('.')}";
+                            }
+                        }
+
+                        using (FtpClient ftpClient = new FtpClient(Host, Port, Username, Password))
+                        {
+                            var tempRemotePath = UriHelper.BuildPath(DestinationFolderPath, uploadRemoteFileName);
+
+                            // Upload the file
+                            var uploadStatus = ftpClient.UploadFile(uploadFileName, tempRemotePath,
+                                Overwrite ? FtpRemoteExists.Overwrite : FtpRemoteExists.NoCheck, CreateRemoteDirectory);
+                            // TODO Log Upload STatus
+
+                            // Rename file after upload
+                            string finalFileName = string.IsNullOrWhiteSpace(DestinationFileName)
+                                ? Path.GetFileName(sourceFilePath)
+                                : DestinationFileName;
+
+                            string finalRemotePath = UriHelper.BuildPath(DestinationFolderPath, finalFileName);
+                            ftpClient.Rename(tempRemotePath, finalRemotePath);
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        // TODO Log 
+                    }
+                    finally
+                    {
+                        // Rename source file to original extension 
+                        if (UseLocalTemporaryExtension && !string.IsNullOrWhiteSpace(uploadFileName) && !string.IsNullOrWhiteSpace(sourceFilePath))
+                        {
+                            if (!string.Equals(uploadFileName, sourceFilePath, StringComparison.CurrentCultureIgnoreCase) && File.Exists(uploadFileName) && !File.Exists(sourceFilePath))
+                            {
+                                File.Move(uploadFileName, sourceFilePath);
+                            }
+                        }
+                    }
                 }
 
-                if (string.IsNullOrWhiteSpace(Host))
-                    return ActionResult.Failed().WithAdditionInformation(ArgumentCollection.New().WithArgument("ERROR", $"Missing Instance Argument {FtpUploadActionInstanceArgs.Host}"));
-
-                if (string.IsNullOrWhiteSpace(Username))
-                    return ActionResult.Failed().WithAdditionInformation(ArgumentCollection.New().WithArgument("ERROR", $"Missing Instance Argument {FtpUploadActionInstanceArgs.Username}"));
-
-                if (string.IsNullOrWhiteSpace(Password))
-                    return ActionResult.Failed().WithAdditionInformation(ArgumentCollection.New().WithArgument("ERROR", $"Missing Instance Argument {FtpUploadActionInstanceArgs.Password}"));
-
-                using (FtpClient ftpClient = new FtpClient(Host, Port, Username, Password))
-                {
-                    // Create temporary file name for uploading the file
-                    string uploadTempFileName =
-                        $"{Path.GetFileNameWithoutExtension(sourceFilePath)}.{DEFAULT_TEMP_EXTENSION}";
-                    var tempRemotePath = UriHelper.BuildPath(DestinationFolderPath, uploadTempFileName);
-
-                    // Upload the file
-                    ftpClient.UploadFile(sourceFilePath, tempRemotePath, FtpRemoteExists.Overwrite, true);
-                    // Rename file after upload
-                    string finalFileName = string.IsNullOrWhiteSpace(DestinationFileName)
-                        ? Path.GetFileName(sourceFilePath)
-                        : DestinationFileName;
-
-                    string finalRemotePath = UriHelper.BuildPath(DestinationFolderPath, finalFileName);
-                    ftpClient.Rename(tempRemotePath, finalRemotePath);
-                }
+                
 
                 return ActionResult.Succeeded();
             }
@@ -123,52 +234,10 @@ namespace Umator.Plugins.FTP.Components
                 return ActionResult.Failed().WithException(exception);
             }
         }
-
-        private bool RenameFile(string remoteFileUri, string renameTo)
-        {
-            try
-            {
-                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(remoteFileUri);
-                request.Credentials = new NetworkCredential(Username, Password);
-                request.Method = WebRequestMethods.Ftp.Rename;
-                request.RenameTo = renameTo;
-                using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
-                {
-                    // TODO : Use logging service
-                    Console.WriteLine($"Upload File Complete, status {response.StatusDescription}");
-                }
-
-                return true;
-            }
-            catch (Exception exception)
-            {
-                Console.WriteLine(exception);
-                return false;
-            }
-        }
-    }
-
-
-    public static class FtpUploadActionInstanceArgs
-    {
-        // Mandatory fields 
-        public const string Host = nameof(Host);
-        public const string Username = nameof(Username);
-        public const string Password = nameof(Password);
-        public const string UseBinary = nameof(UseBinary);
-
-        // Optional Fields 
-        public const string Port = nameof(Port);
-        public const string DestinationFolderPath = nameof(DestinationFolderPath);
-        public const string DestinationFileName = nameof(DestinationFileName);
-
-        // Extension 
-        public const string RemoteTemporaryExtension = nameof(RemoteTemporaryExtension);
-        public const string LocalTemporaryExtension = nameof(LocalTemporaryExtension);
     }
 
     public static class FtpUploadActionExecutionArgs 
     {
-        public const string SourceFilePath = nameof(SourceFilePath);
+        public const string SourceFilesCollection = nameof(SourceFilesCollection);
     }
 }

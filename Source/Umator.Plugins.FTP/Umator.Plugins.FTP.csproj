@@ -19,4 +19,13 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="icon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="License.rtf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

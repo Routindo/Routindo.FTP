@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,16 +21,22 @@ namespace Umator.Plugins.FTP.Tests
                 Password = "user",
                 DestinationFolderPath = "Data",
                 DestinationFileName = "renamed.txt",
+                Port = 21, UseRemoteTemporaryExtension = true,
+                RemoteTemporaryExtension = "remote",
+                UseLocalTemporaryExtension = true,
+                LocalTemporaryExtension = "local",
+                Overwrite = true,
+                CreateRemoteDirectory = true
             };
 
             string sourceFileName = Path.Combine(Path.GetTempPath(), "test.txt");
-            File.WriteAllText(sourceFileName, "Hello world! 2");
+            File.WriteAllText(sourceFileName, "Hello world! This is a remote message!");
 
             var result =  action.Execute(ArgumentCollection.New()
-                .WithArgument(FtpUploadActionExecutionArgs.SourceFilePath, sourceFileName));
+                .WithArgument(FtpUploadActionExecutionArgs.SourceFilesCollection, new List<string> { sourceFileName }));
             Console.WriteLine(result.AttachedException);
             Assert.IsTrue(result.Result);
-            // File.Delete(sourceFileName);
+            File.Delete(sourceFileName);
         }
     }
 }

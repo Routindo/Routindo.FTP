@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".Solution Items", ".Solutio
 		NuGet.config = NuGet.config
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umator.Plugins.FTP.Preview", "Source\Umator.Plugins.FTP.Preview\Umator.Plugins.FTP.Preview.csproj", "{0CA9CAF2-00F6-4B0E-8F2A-EE3B0DAE3887}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,18 @@ Global
 		{FCC9BE7D-2BF9-4F22-8567-EB78ED6F5D6F}.Release|x64.Build.0 = Release|Any CPU
 		{FCC9BE7D-2BF9-4F22-8567-EB78ED6F5D6F}.Release|x86.ActiveCfg = Release|Any CPU
 		{FCC9BE7D-2BF9-4F22-8567-EB78ED6F5D6F}.Release|x86.Build.0 = Release|Any CPU
+		{0CA9CAF2-00F6-4B0E-8F2A-EE3B0DAE3887}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CA9CAF2-00F6-4B0E-8F2A-EE3B0DAE3887}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CA9CAF2-00F6-4B0E-8F2A-EE3B0DAE3887}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0CA9CAF2-00F6-4B0E-8F2A-EE3B0DAE3887}.Debug|x64.Build.0 = Debug|Any CPU
+		{0CA9CAF2-00F6-4B0E-8F2A-EE3B0DAE3887}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0CA9CAF2-00F6-4B0E-8F2A-EE3B0DAE3887}.Debug|x86.Build.0 = Debug|Any CPU
+		{0CA9CAF2-00F6-4B0E-8F2A-EE3B0DAE3887}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CA9CAF2-00F6-4B0E-8F2A-EE3B0DAE3887}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CA9CAF2-00F6-4B0E-8F2A-EE3B0DAE3887}.Release|x64.ActiveCfg = Release|Any CPU
+		{0CA9CAF2-00F6-4B0E-8F2A-EE3B0DAE3887}.Release|x64.Build.0 = Release|Any CPU
+		{0CA9CAF2-00F6-4B0E-8F2A-EE3B0DAE3887}.Release|x86.ActiveCfg = Release|Any CPU
+		{0CA9CAF2-00F6-4B0E-8F2A-EE3B0DAE3887}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -88,6 +102,7 @@ Global
 		{46C7A4FC-6DFB-4257-A05A-BE6ED1D867E1} = {A4FB6E68-BC61-4275-A4EB-E5B9E9F2098B}
 		{E387FBC4-9541-4754-BB2E-D231ED1610B4} = {A4FB6E68-BC61-4275-A4EB-E5B9E9F2098B}
 		{FCC9BE7D-2BF9-4F22-8567-EB78ED6F5D6F} = {FC48D3BF-B425-4459-B1AE-091571CCA1F1}
+		{0CA9CAF2-00F6-4B0E-8F2A-EE3B0DAE3887} = {A4FB6E68-BC61-4275-A4EB-E5B9E9F2098B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AE8E4144-C2D4-4DCC-BF5A-866B9C10B61B}
