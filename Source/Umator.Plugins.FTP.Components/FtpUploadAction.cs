@@ -21,6 +21,8 @@ namespace Umator.Plugins.FTP.Components
 
         public string Id { get; set; }
 
+        public ILoggingService LoggingService { get; set; }
+
         /// <summary>
         /// Gets or sets the host.
         /// </summary>
@@ -123,7 +125,6 @@ namespace Umator.Plugins.FTP.Components
         /// <returns></returns>
         public ActionResult Execute(ArgumentCollection arguments)
         {
-            // string uploadFileName = null; // , sourceFilePath = null;
             try
             {
 
@@ -141,96 +142,123 @@ namespace Umator.Plugins.FTP.Components
 
                 foreach (var sourceFilePath in filePaths)
                 {
+                    LoggingService.Debug($"Uploading file {sourceFilePath}");
                     string uploadFileName = null;
                     try
                     {
                         if (!File.Exists(sourceFilePath))
                         {
-                            // File not found 
-                            return ActionResult.Failed().WithAdditionInformation(ArgumentCollection.New()
-                                .WithArgument("ERROR", $"File Not Exist : {sourceFilePath}"));
+                            LoggingService.Error($"File doesn't not exist {sourceFilePath}");
+                            continue;
                         }
 
                         if (string.IsNullOrWhiteSpace(Host))
-                            return ActionResult.Failed().WithAdditionInformation(ArgumentCollection.New()
-                                .WithArgument("ERROR",
-                                    $"Missing Instance Argument {FtpUploadActionInstanceArgs.Host}"));
+                        {
+                            LoggingService.Error($"Missing Instance Argument {FtpUploadActionInstanceArgs.Host}");
+                            continue;
+                        }
 
                         if (string.IsNullOrWhiteSpace(Username))
-                            return ActionResult.Failed().WithAdditionInformation(ArgumentCollection.New()
-                                .WithArgument("ERROR",
-                                    $"Missing Instance Argument {FtpUploadActionInstanceArgs.Username}"));
+                        {
+                            LoggingService.Error($"Missing Instance Argument {FtpUploadActionInstanceArgs.Username}");
+                            continue;
+                        }
 
                         if (string.IsNullOrWhiteSpace(Password))
-                            return ActionResult.Failed().WithAdditionInformation(ArgumentCollection.New()
-                                .WithArgument("ERROR",
-                                    $"Missing Instance Argument {FtpUploadActionInstanceArgs.Password}"));
+                        {
+                            LoggingService.Error($"Missing Instance Argument {FtpUploadActionInstanceArgs.Password}");
+                            continue;
+                        }
 
                         uploadFileName = sourceFilePath;
                         if (UseLocalTemporaryExtension && !string.IsNullOrWhiteSpace(LocalTemporaryExtension))
                         {
+                            LoggingService.Debug($"Renaming file with temporary extension {LocalTemporaryExtension} => From {sourceFilePath} to {uploadFileName}");
                             uploadFileName =
                                 Path.ChangeExtension(sourceFilePath, LocalTemporaryExtension.TrimStart('.'));
+                            if (File.Exists(uploadFileName))
+                            {
+                                LoggingService.Error($"File with the same name already exist! {uploadFileName}");
+                                continue;
+                            }
+
                             File.Move(sourceFilePath, uploadFileName);
+                            LoggingService.Debug($"File renamed to {uploadFileName}");
                         }
 
                         string uploadRemoteFileName = null;
                         if (UseRemoteTemporaryExtension && !string.IsNullOrWhiteSpace(RemoteTemporaryExtension))
                         {
+                            LoggingService.Debug($"Setting a temporary remote filename extension to {RemoteTemporaryExtension}");
                             if (!string.IsNullOrWhiteSpace(DestinationFileName))
                             {
+                                LoggingService.Debug($"Using a static name for remote file name: {DestinationFileName}");
                                 uploadRemoteFileName =
                                     $"{Path.ChangeExtension(DestinationFileName, null)}.{RemoteTemporaryExtension.TrimStart('.')}";
+                                LoggingService.Debug($"Remote file name with Temporary extension and a static name {uploadRemoteFileName}");
                             }
                             else
                             {
                                 uploadRemoteFileName =
                                     $"{Path.GetFileNameWithoutExtension(sourceFilePath)}.{RemoteTemporaryExtension.TrimStart('.')}";
+                                LoggingService.Debug($"Remote file name with Temporary extension {uploadRemoteFileName}");
                             }
                         }
 
+                        LoggingService.Debug($"Connecting to Host {Host}");
                         using (FtpClient ftpClient = new FtpClient(Host, Port, Username, Password))
                         {
                             var tempRemotePath = UriHelper.BuildPath(DestinationFolderPath, uploadRemoteFileName);
 
+                            LoggingService.Debug($"Uploading file with options : {FtpUploadActionInstanceArgs.Overwrite}={Overwrite} and {FtpUploadActionInstanceArgs.CreateRemoteDirectory}={CreateRemoteDirectory}");
                             // Upload the file
                             var uploadStatus = ftpClient.UploadFile(uploadFileName, tempRemotePath,
                                 Overwrite ? FtpRemoteExists.Overwrite : FtpRemoteExists.NoCheck, CreateRemoteDirectory);
-                            // TODO Log Upload STatus
+                            LoggingService.Debug($"File Upload completed with status {uploadStatus:G}");
 
                             // Rename file after upload
                             string finalFileName = string.IsNullOrWhiteSpace(DestinationFileName)
                                 ? Path.GetFileName(sourceFilePath)
                                 : DestinationFileName;
 
+                            LoggingService.Debug($"Renaming the uploaded remote file to its final name: {finalFileName}");
                             string finalRemotePath = UriHelper.BuildPath(DestinationFolderPath, finalFileName);
+                            
                             ftpClient.Rename(tempRemotePath, finalRemotePath);
                         }
                     }
                     catch (Exception exception)
                     {
-                        // TODO Log 
+                        LoggingService.Error(exception, $"File: {sourceFilePath}");
                     }
                     finally
                     {
                         // Rename source file to original extension 
                         if (UseLocalTemporaryExtension && !string.IsNullOrWhiteSpace(uploadFileName) && !string.IsNullOrWhiteSpace(sourceFilePath))
                         {
-                            if (!string.Equals(uploadFileName, sourceFilePath, StringComparison.CurrentCultureIgnoreCase) && File.Exists(uploadFileName) && !File.Exists(sourceFilePath))
+                            LoggingService.Debug($"Renaming the local file to with its original extension");
+                            if (!string.Equals(uploadFileName, sourceFilePath, StringComparison.CurrentCultureIgnoreCase))
                             {
-                                File.Move(uploadFileName, sourceFilePath);
+                                bool sourceFileExist = File.Exists(sourceFilePath);
+                                bool uploadFileExist = File.Exists(uploadFileName);
+                                if (uploadFileExist && !sourceFileExist)
+                                {
+                                    File.Move(uploadFileName, sourceFilePath);
+                                }
+                                else
+                                {
+                                    LoggingService.Error($"The file with temporary name was not found [{nameof(uploadFileExist)}={uploadFileExist}] or another file with the same original name was created during the upload process [{nameof(sourceFileExist)}={sourceFileExist}].");
+                                }
                             }
                         }
                     }
                 }
 
-                
-
                 return ActionResult.Succeeded();
             }
             catch (Exception exception)
             {
-                // _loggingService.Error(exception.ToString());
+                LoggingService.Error(exception);
                 return ActionResult.Failed().WithException(exception);
             }
         }
