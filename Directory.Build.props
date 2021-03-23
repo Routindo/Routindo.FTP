@@ -1,8 +1,8 @@
 <Project>
 	<PropertyGroup>
-		<Company>Umator</Company>
+		<Company>Routindo</Company>
 		<Authors>Younes CHEIKH</Authors>
-		<Product>Umator 2020 - FTP Plugin</Product>
+		<Product>Routindo 2020 - FTP Plugin</Product>
 		<Copyright>Copyright © 2020 - All rights reserved</Copyright>
     <VersionPrefix>1.1.0</VersionPrefix>
     <!--<VersionSuffix>alpha</VersionSuffix>-->
