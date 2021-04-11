@@ -5,5 +5,5 @@
     "FTP Client",
     "Plugin for communicating with remote host via FTP protocol",
     Author = "Routindo", AuthorUri = "https://routindo.com/ftp-client/", 
-    DocumentationUri = "https://routindo.com/docs/ftp-client/", SupportUri = "https://routindo.com/support/forum/?view=forum&id=17"
+    DocumentationUri = "https://routindo.com/docs/ftp-client/", SupportUri = "https://routindo.com/support/forum/?view=forum&id=8"
 )]
