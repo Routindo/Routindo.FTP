@@ -148,7 +148,7 @@ function Build-Project($ProjectPath) {
 }
 
 function Get-Version-Suffix($ProjectPath) {
-    $commitHash = (git -C (Split-Path $ProjectPath -Parent) rev-parse HEAD).Substring(0,8);
+    $commitHash = "c$((git -C (Split-Path $ProjectPath -Parent) rev-parse HEAD).Substring(0,8))";
     if([string]::IsNullOrEmpty($PreRelease)) {
         return $commitHash
     } 

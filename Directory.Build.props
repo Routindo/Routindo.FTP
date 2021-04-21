@@ -2,10 +2,9 @@
 	<PropertyGroup>
 		<Company>Routindo</Company>
 		<Authors>Younes CHEIKH</Authors>
-		<Product>Routindo 2020 - FTP Plugin</Product>
-		<Copyright>Copyright © 2020 - All rights reserved</Copyright>
-    <VersionPrefix>1.0.3</VersionPrefix>
-    <!--<VersionSuffix>alpha</VersionSuffix>-->
+		<Product>Routindo 21 - FTP Plugin</Product>
+		<Copyright>Copyright © 21 - All rights reserved</Copyright>
+		<VersionPrefix>1.0.5</VersionPrefix>
 		<NeutralLanguage>en</NeutralLanguage>
 	</PropertyGroup>
 </Project>
