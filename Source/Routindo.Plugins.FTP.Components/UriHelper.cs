@@ -43,17 +43,7 @@ namespace Routindo.Plugins.FTP.Components
 
         public static string GetFileName(string ftpPath)
         {
-            // if (Path.IsPathRooted(ftpPath))
-                return Path.GetFileName(ftpPath);
-
-            return ftpPath;
-            //Uri uri = new Uri(ftpPath, UriKind.Relative);
-            //if (uri.IsFile)
-            //{
-            //    return System.IO.Path.GetFileName(uri.LocalPath);
-            //}
-
-            //return null;
+            return Path.GetFileName(ftpPath);
         }
     }
 }

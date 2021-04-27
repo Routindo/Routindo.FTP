@@ -11,13 +11,18 @@ using Routindo.Contract.Services;
 
 namespace Routindo.Plugins.FTP.Components.Actions.DownloadFile
 {
+    [PluginItemInfo(ComponentUniqueId, "FTP File Downloader",
+         "Download one or multiple files from remote host via FTP"),
+     ExecutionArgumentsClass(typeof(FtpDownloadActionExecutionArgs)), 
+    ResultArgumentsClass(typeof(FtpDownloadActionResultArgs))
+    ]
     public class FtpDownloadAction : IAction
     {
 
         public const string ComponentUniqueId = "80901D31-1766-4E2F-A369-0305DC2DDC76";
 
-        private const int DEFAULT_FTP_PORT = 21;
-        private const string DEFAULT_TEMP_EXTENSION = "temp";
+        public const int DEFAULT_FTP_PORT = 21;
+        public const string DEFAULT_TEMP_EXTENSION = "temp";
 
         public string Id { get; set; }
         public ILoggingService LoggingService { get; set; }

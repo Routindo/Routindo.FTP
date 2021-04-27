@@ -9,10 +9,21 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <views:UploadFileActionView>
-            <views:UploadFileActionView.DataContext>
-                <viewModels:UploadFileActionViewModel/>
-            </views:UploadFileActionView.DataContext>
-        </views:UploadFileActionView>
+        <TabControl>
+            <TabItem Header="Upload">
+                <views:UploadFileActionView>
+                    <views:UploadFileActionView.DataContext>
+                        <viewModels:UploadFileActionViewModel/>
+                    </views:UploadFileActionView.DataContext>
+                </views:UploadFileActionView>
+            </TabItem>
+            <TabItem Header="Download">
+                <views:DownloadFileActionView>
+                    <views:DownloadFileActionView.DataContext>
+                        <viewModels:DownloadFileActionViewModel/>
+                    </views:DownloadFileActionView.DataContext>
+                </views:DownloadFileActionView>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>

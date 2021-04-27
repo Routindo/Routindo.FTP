@@ -12,66 +12,10 @@
     </UserControl.DataContext>
     <UserControl.Resources>
         <ResourceDictionary>
-            <Style TargetType="Button">
-                <Setter Property="Margin" Value="5 0" />
-                <Setter Property="Padding" Value="5" />
-                <Setter Property="Background" Value="Transparent" />
-                <Setter Property="MinWidth" Value="95" />
-            </Style>
-            <Style TargetType="CheckBox">
-                <Setter Property="VerticalAlignment"  Value="Center"/>
-            </Style>
-            <Style TargetType="RadioButton">
-                <Setter Property="VerticalAlignment"  Value="Center"/>
-                <Setter Property="Margin"  Value="5 0"/>
-            </Style>
-            <Style TargetType="ComboBox">
-                <Setter Property="VerticalAlignment"  Value="Center"/>
-                <Setter Property="VerticalContentAlignment"  Value="Center"/>
-                <Setter Property="Background"  Value="Transparent"/>
-                <Setter Property="Margin"  Value="5 0"/>
-                <Setter Property="Width"  Value="240"/>
-                <Setter Property="Height"  Value="30"/>
-            </Style>
-            <Style TargetType="TextBox">
-                <Setter Property="VerticalAlignment" Value="Center" />
-                <Setter Property="Padding" Value="1 5" />
-                <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            </Style>
-            <Style TargetType="PasswordBox">
-                <Setter Property="VerticalAlignment" Value="Center" />
-                <Setter Property="VerticalContentAlignment" Value="Center" />
-                <Setter Property="Padding" Value="1 5" />
-            </Style>
-            <Style TargetType="Label">
-                <Setter Property="FontWeight" Value="Bold" />
-                <Setter Property="ContentStringFormat" Value="{}{0}:" />
-                <Setter Property="VerticalAlignment" Value="Center" />
-                <Setter Property="HorizontalAlignment" Value="Right" />
-                <Setter Property="Margin" Value="0 0 5 0" />
-            </Style>
-            <Style TargetType="Grid">
-                <Setter Property="Margin" Value="0 10" />
-            </Style>
-            <Style TargetType="TextBlock">
-                <Setter Property="VerticalAlignment" Value="Center" />
-                <Setter Property="TextWrapping" Value="Wrap" />
-                <Setter Property="Margin" Value="5" />
-            </Style>
-
-
-            <ControlTemplate x:Key="ErrorControlTemplate">
-
-                <Grid>
-                    <Ellipse Fill="Red" Opacity="0.8" Width="15" Height="15"
-                             HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5"
-                             ToolTip="{Binding Path=/ErrorContent}" />
-                    <AdornedElementPlaceholder x:Name="placeholder" ToolTip="{Binding Path=/ErrorContent}">
-                        <Border BorderBrush="Red" BorderThickness="1" />
-                    </AdornedElementPlaceholder>
-                </Grid>
-
-            </ControlTemplate>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Styles.xaml" />
+                <ResourceDictionary Source="../Templates.xaml" />
+            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
         
     </UserControl.Resources>
