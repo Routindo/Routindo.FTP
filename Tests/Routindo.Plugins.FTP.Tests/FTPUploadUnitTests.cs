@@ -1,30 +1,32 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Routindo.Contract;
 using Routindo.Contract.Arguments;
-using Routindo.Plugins.FTP.Components;
-using Routindo.Plugins.FTP.Components.Actions;
+using Routindo.Contract.Services;
 using Routindo.Plugins.FTP.Components.Actions.UploadFile;
 
 namespace Routindo.Plugins.FTP.Tests
 {
     [TestClass]
-    public class FTPUploadUnitTests
+    public class FtpUploadUnitTests
     {
         [TestMethod]
+        [TestCategory("Integration Test")]
         public void SendSampleFileTest()
         {
             FtpUploadAction action = new FtpUploadAction()
             {
-                Host = "192.168.175.128",
-                Username = "user",
-                Password = "user",
+                Id = PluginUtilities.GetUniqueId(),
+                LoggingService = ServicesContainer.ServicesProvider.GetLoggingService(nameof(FtpUploadAction)),
+                Host = FtpTestCredentials.Host,
+                Username = FtpTestCredentials.User,
+                Password = FtpTestCredentials.Password,
+                Port = FtpTestCredentials.Port,
                 DestinationFolderPath = "Data",
                 DestinationFileName = "renamed.txt",
-                Port = 21, UseRemoteTemporaryExtension = true,
+                UseRemoteTemporaryExtension = true,
                 RemoteTemporaryExtension = "remote",
                 UseLocalTemporaryExtension = true,
                 LocalTemporaryExtension = "local",

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Routindo.Contract;
 using Routindo.Contract.Arguments;
@@ -42,9 +41,10 @@ namespace Routindo.Plugins.FTP.Tests
                 Id = PluginUtilities.GetUniqueId(),
                 LoggingService = ServicesContainer.ServicesProvider.GetLoggingService(nameof(FtpDownloadAction))
             };
-            ftpDownloadAction.Host = "localhost";
-            ftpDownloadAction.Username = "user";
-            ftpDownloadAction.Password = "user";
+            ftpDownloadAction.Host = FtpTestCredentials.Host;
+            ftpDownloadAction.Username = FtpTestCredentials.User;
+            ftpDownloadAction.Password = FtpTestCredentials.Password;
+            ftpDownloadAction.Port = FtpTestCredentials.Port;
             ftpDownloadAction.DirectoryPath = LocalDownloadDir;
 
             var fileNamePath = CreateTestFile(localWriteDir);
@@ -67,9 +67,10 @@ namespace Routindo.Plugins.FTP.Tests
                 Id = PluginUtilities.GetUniqueId(),
                 LoggingService = ServicesContainer.ServicesProvider.GetLoggingService(nameof(FtpDownloadAction))
             };
-            ftpDownloadAction.Host = "localhost";
-            ftpDownloadAction.Username = "user";
-            ftpDownloadAction.Password = "user";
+            ftpDownloadAction.Host = FtpTestCredentials.Host;
+            ftpDownloadAction.Username = FtpTestCredentials.User;
+            ftpDownloadAction.Password = FtpTestCredentials.Password;
+            ftpDownloadAction.Port = FtpTestCredentials.Port;
             ftpDownloadAction.DirectoryPath = LocalDownloadDir;
             ftpDownloadAction.Overwrite = true;
 
@@ -105,9 +106,10 @@ namespace Routindo.Plugins.FTP.Tests
                 Id = PluginUtilities.GetUniqueId(),
                 LoggingService = ServicesContainer.ServicesProvider.GetLoggingService(nameof(FtpDownloadAction))
             };
-            ftpDownloadAction.Host = "localhost";
-            ftpDownloadAction.Username = "user";
-            ftpDownloadAction.Password = "user";
+            ftpDownloadAction.Host = FtpTestCredentials.Host;
+            ftpDownloadAction.Username = FtpTestCredentials.User;
+            ftpDownloadAction.Password = FtpTestCredentials.Password;
+            ftpDownloadAction.Port = FtpTestCredentials.Port;
             ftpDownloadAction.DirectoryPath = LocalDownloadDir;
             ftpDownloadAction.Append = true;
 
@@ -149,9 +151,10 @@ namespace Routindo.Plugins.FTP.Tests
                 Id = PluginUtilities.GetUniqueId(),
                 LoggingService = ServicesContainer.ServicesProvider.GetLoggingService(nameof(FtpDownloadAction))
             };
-            ftpDownloadAction.Host = "localhost";
-            ftpDownloadAction.Username = "user";
-            ftpDownloadAction.Password = "user";
+            ftpDownloadAction.Host = FtpTestCredentials.Host;
+            ftpDownloadAction.Username = FtpTestCredentials.User;
+            ftpDownloadAction.Password = FtpTestCredentials.Password;
+            ftpDownloadAction.Port = FtpTestCredentials.Port;
             ftpDownloadAction.DirectoryPath = LocalDownloadDir;
             ftpDownloadAction.UseTemporaryName = true;
 
