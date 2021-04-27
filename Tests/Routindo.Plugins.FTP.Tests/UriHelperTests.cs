@@ -21,5 +21,13 @@ namespace Routindo.Plugins.FTP.Tests
             Assert.AreEqual("Directory/SubDirectory/File.txt", uri);
             Console.WriteLine(uri);
         }
+
+        [TestMethod]
+        public void GetFileNameFromPathTest()
+        {
+            var fileName = UriHelper.GetFileName("Directory/File.txt");
+            Assert.AreEqual("File.txt", fileName);
+            Console.WriteLine(fileName);
+        }
     }
 }

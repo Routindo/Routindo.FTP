@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
-using System.Text;
 using FluentFTP;
-using Routindo.Contract;
 using Routindo.Contract.Actions;
 using Routindo.Contract.Arguments;
 using Routindo.Contract.Attributes;
 using Routindo.Contract.Exceptions;
 using Routindo.Contract.Services;
 
-namespace Routindo.Plugins.FTP.Components
+namespace Routindo.Plugins.FTP.Components.Actions.UploadFile
 {
     [PluginItemInfo(ComponentUniqueId, "FTP Uploader",
          "Upload a File to remote host via FTP"),
@@ -266,10 +263,5 @@ namespace Routindo.Plugins.FTP.Components
                 return ActionResult.Failed().WithException(exception);
             }
         }
-    }
-
-    public static class FtpUploadActionExecutionArgs 
-    {
-        public const string SourceFilesCollection = nameof(SourceFilesCollection);
     }
 }
