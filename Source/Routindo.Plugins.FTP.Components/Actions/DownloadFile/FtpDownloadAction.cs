@@ -66,7 +66,7 @@ namespace Routindo.Plugins.FTP.Components.Actions.DownloadFile
         [Argument(FtpDownloadActionArgs.Password, true)]
         public string Password { get; set; }
 
-        [Argument(FtpDownloadActionArgs.RemoteWorkingDir, true)]
+        [Argument(FtpDownloadActionArgs.RemoteWorkingDir, false)]
         public string RemoteWorkingDir { get; set; }
 
         [Argument(FtpDownloadActionArgs.DirectoryPath, true)]

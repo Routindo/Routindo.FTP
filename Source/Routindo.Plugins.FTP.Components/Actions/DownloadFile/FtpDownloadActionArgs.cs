@@ -9,6 +9,7 @@
 
         // Optional Fields 
         public const string Port = nameof(Port);
+        public const string RemoteWorkingDir = nameof(RemoteWorkingDir);
 
         // Extension 
         public const string DirectoryPath = nameof(DirectoryPath);
@@ -18,6 +19,6 @@
 
         public const string UseTemporaryName = nameof(UseTemporaryName);
 
-        public const string RemoteWorkingDir = nameof(RemoteWorkingDir);
+        
     }
 }
