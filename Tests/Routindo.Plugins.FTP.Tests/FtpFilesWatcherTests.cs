@@ -36,10 +36,10 @@ namespace Routindo.Plugins.FTP.Tests
         public void WatchForFilesTest()
         {
             string remoteWorkingDir = "/";
-            FtpFilesWatcher watcher = new FtpFilesWatcher
+            FtpWatcher watcher = new FtpWatcher
             {
                 Id = PluginUtilities.GetUniqueId(),
-                LoggingService = ServicesContainer.ServicesProvider.GetLoggingService(nameof(FtpFilesWatcher)),
+                LoggingService = ServicesContainer.ServicesProvider.GetLoggingService(nameof(FtpWatcher)),
                 Host = FtpTestCredentials.Host,
                 Username = FtpTestCredentials.User,
                 Password = FtpTestCredentials.Password,
@@ -53,11 +53,11 @@ namespace Routindo.Plugins.FTP.Tests
             Assert.IsNotNull(watcherResult);
             Assert.AreEqual(true, watcherResult.Result);
             Assert.IsNotNull(watcherResult.WatchingArguments);
-            Assert.IsTrue(watcherResult.WatchingArguments.HasArgument(FtpFilesWatcherResultArgs.RemoteFilesCollection));
-            Assert.IsTrue(watcherResult.WatchingArguments.GetValue<List<string>>(FtpFilesWatcherResultArgs.RemoteFilesCollection).Any());
-            Assert.AreEqual(1, watcherResult.WatchingArguments.GetValue<List<string>>(FtpFilesWatcherResultArgs.RemoteFilesCollection).Count);
+            Assert.IsTrue(watcherResult.WatchingArguments.HasArgument(FtpWatcherResultArgs.RemoteFilesCollection));
+            Assert.IsTrue(watcherResult.WatchingArguments.GetValue<List<string>>(FtpWatcherResultArgs.RemoteFilesCollection).Any());
+            Assert.AreEqual(1, watcherResult.WatchingArguments.GetValue<List<string>>(FtpWatcherResultArgs.RemoteFilesCollection).Count);
 
-            var watchedFile = watcherResult.WatchingArguments.GetValue<List<string>>(FtpFilesWatcherResultArgs
+            var watchedFile = watcherResult.WatchingArguments.GetValue<List<string>>(FtpWatcherResultArgs
                 .RemoteFilesCollection).Single();
 
             Assert.AreEqual(remoteWorkingDir +Path.GetFileName(fileNamePath), watchedFile);
@@ -68,10 +68,10 @@ namespace Routindo.Plugins.FTP.Tests
         public void WatchForFilesInDirTest()
         {
             string remoteWorkingDir = "/test";
-            FtpFilesWatcher watcher = new FtpFilesWatcher
+            FtpWatcher watcher = new FtpWatcher
             {
                 Id = PluginUtilities.GetUniqueId(),
-                LoggingService = ServicesContainer.ServicesProvider.GetLoggingService(nameof(FtpFilesWatcher)),
+                LoggingService = ServicesContainer.ServicesProvider.GetLoggingService(nameof(FtpWatcher)),
                 Host = FtpTestCredentials.Host,
                 Username = FtpTestCredentials.User,
                 Password = FtpTestCredentials.Password,
@@ -87,11 +87,11 @@ namespace Routindo.Plugins.FTP.Tests
             Assert.IsNotNull(watcherResult);
             Assert.AreEqual(true, watcherResult.Result);
             Assert.IsNotNull(watcherResult.WatchingArguments);
-            Assert.IsTrue(watcherResult.WatchingArguments.HasArgument(FtpFilesWatcherResultArgs.RemoteFilesCollection));
-            Assert.IsTrue(watcherResult.WatchingArguments.GetValue<List<string>>(FtpFilesWatcherResultArgs.RemoteFilesCollection).Any());
-            Assert.AreEqual(1, watcherResult.WatchingArguments.GetValue<List<string>>(FtpFilesWatcherResultArgs.RemoteFilesCollection).Count);
+            Assert.IsTrue(watcherResult.WatchingArguments.HasArgument(FtpWatcherResultArgs.RemoteFilesCollection));
+            Assert.IsTrue(watcherResult.WatchingArguments.GetValue<List<string>>(FtpWatcherResultArgs.RemoteFilesCollection).Any());
+            Assert.AreEqual(1, watcherResult.WatchingArguments.GetValue<List<string>>(FtpWatcherResultArgs.RemoteFilesCollection).Count);
 
-            var watchedFile = watcherResult.WatchingArguments.GetValue<List<string>>(FtpFilesWatcherResultArgs
+            var watchedFile = watcherResult.WatchingArguments.GetValue<List<string>>(FtpWatcherResultArgs
                 .RemoteFilesCollection).Single();
 
             Assert.AreEqual(UriHelper.BuildPath("/", remoteWorkingDir, Path.GetFileName(fileNamePath)), watchedFile);
@@ -110,10 +110,10 @@ namespace Routindo.Plugins.FTP.Tests
         public void WatchForDirectoryTest()
         {
             string remoteWorkingDir = "/";
-            FtpFilesWatcher watcher = new FtpFilesWatcher
+            FtpWatcher watcher = new FtpWatcher
             {
                 Id = PluginUtilities.GetUniqueId(),
-                LoggingService = ServicesContainer.ServicesProvider.GetLoggingService(nameof(FtpFilesWatcher)),
+                LoggingService = ServicesContainer.ServicesProvider.GetLoggingService(nameof(FtpWatcher)),
                 Host = FtpTestCredentials.Host,
                 Username = FtpTestCredentials.User,
                 Password = FtpTestCredentials.Password,
@@ -125,9 +125,9 @@ namespace Routindo.Plugins.FTP.Tests
             Assert.IsNotNull(watcherResult);
             Assert.AreEqual(true, watcherResult.Result);
             Assert.IsNotNull(watcherResult.WatchingArguments);
-            Assert.IsTrue(watcherResult.WatchingArguments.HasArgument(FtpFilesWatcherResultArgs.RemoteFilesCollection));
-            Assert.IsTrue(watcherResult.WatchingArguments.GetValue<List<string>>(FtpFilesWatcherResultArgs.RemoteFilesCollection).Any());
-            Assert.AreEqual(1, watcherResult.WatchingArguments.GetValue<List<string>>(FtpFilesWatcherResultArgs.RemoteFilesCollection).Count);
+            Assert.IsTrue(watcherResult.WatchingArguments.HasArgument(FtpWatcherResultArgs.RemoteFilesCollection));
+            Assert.IsTrue(watcherResult.WatchingArguments.GetValue<List<string>>(FtpWatcherResultArgs.RemoteFilesCollection).Any());
+            Assert.AreEqual(1, watcherResult.WatchingArguments.GetValue<List<string>>(FtpWatcherResultArgs.RemoteFilesCollection).Count);
         }
     }
 }

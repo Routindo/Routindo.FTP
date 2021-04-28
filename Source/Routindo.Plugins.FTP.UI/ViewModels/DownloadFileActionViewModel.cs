@@ -128,7 +128,11 @@ namespace Routindo.Plugins.FTP.UI.ViewModels
         public string RemoteWorkingDir
         {
             get => _remoteWorkingDir;
-            set => _remoteWorkingDir = value;
+            set
+            {
+                _remoteWorkingDir = value;
+                OnPropertyChanged();
+            }
         }
 
         public override void Configure()
