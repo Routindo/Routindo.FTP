@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FluentFTP;
 
 namespace Routindo.Plugins.FTP.Components
 {
@@ -44,6 +45,17 @@ namespace Routindo.Plugins.FTP.Components
         public static string GetFileName(string ftpPath)
         {
             return Path.GetFileName(ftpPath);
+        }
+
+        //public static string GetParentUriString(Uri uri)
+        //{
+        //    return uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments.Last().Length);
+        //}
+
+        public static string GetParentUriString(string uriString)
+        {
+            var pathSegments = uriString.GetPathSegments();
+            return BuildPath(pathSegments.Take(pathSegments.Length - 1).ToArray());
         }
     }
 }

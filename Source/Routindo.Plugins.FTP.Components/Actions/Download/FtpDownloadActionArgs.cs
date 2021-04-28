@@ -22,6 +22,10 @@
 
         public const string DeleteDownloaded = nameof(DeleteDownloaded);
         public const string MoveDownloaded = nameof(MoveDownloaded);
-        public const string MoveDownloadedPath = nameof(MoveDownloadedPath); 
+        public const string MoveDownloadedPath = nameof(MoveDownloadedPath);
+        public const string RenameDownloaded = nameof(RenameDownloaded);
+        public const string RenameDownloadedExtension = nameof(RenameDownloadedExtension);
+        public const string RenameDownloadedPrefix = nameof(RenameDownloadedPrefix);
+        public const string RenameDownloadedNewName = nameof(RenameDownloadedNewName);
     }
 }

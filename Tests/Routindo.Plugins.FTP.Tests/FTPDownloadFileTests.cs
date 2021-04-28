@@ -13,18 +13,12 @@ namespace Routindo.Plugins.FTP.Tests
     [TestClass]
     public class FtpDownloadFileTests
     {
-        private const string LocalWorkingDir = @"%userprofile%\DATA\Temps\ftp";
-        private const string LocalDownloadDir = @"%userprofile%\DATA\Temps\ftp\test";
+        private const string LocalWorkingDir = @"%userprofile%\DATA\Temps\ftp\test";
+        private const string LocalDownloadDir = @"%userprofile%\DATA\Temps\ftp\downloaded";
         [TestCleanup]
         public void Cleanup()
         {
-            var files = Directory.GetFiles(Environment.ExpandEnvironmentVariables(LocalWorkingDir));
-            foreach (var file in files)
-            {
-                File.Delete(file);
-            }
-
-            files = Directory.GetFiles(Environment.ExpandEnvironmentVariables(LocalDownloadDir));
+            var files = Directory.GetFiles(Path.GetDirectoryName(Environment.ExpandEnvironmentVariables(LocalWorkingDir)), "*", SearchOption.AllDirectories);
             foreach (var file in files)
             {
                 File.Delete(file);
@@ -35,7 +29,7 @@ namespace Routindo.Plugins.FTP.Tests
         [TestCategory("Integration Test")]
         public void DownloadFileTest()
         {
-            var localWriteDir = Environment.ExpandEnvironmentVariables(LocalWorkingDir);
+            var localWriteDir = Path.GetDirectoryName(Environment.ExpandEnvironmentVariables(LocalWorkingDir));
             FtpDownloadAction ftpDownloadAction = new FtpDownloadAction()
             {
                 Id = PluginUtilities.GetUniqueId(),
@@ -61,7 +55,7 @@ namespace Routindo.Plugins.FTP.Tests
         [TestCategory("Integration Test")]
         public void DownloadFileWithOverwriteTest()
         {
-            var localWriteDir = Environment.ExpandEnvironmentVariables(LocalWorkingDir);
+            var localWriteDir = Path.GetDirectoryName(Environment.ExpandEnvironmentVariables(LocalWorkingDir));
             FtpDownloadAction ftpDownloadAction = new FtpDownloadAction()
             {
                 Id = PluginUtilities.GetUniqueId(),
@@ -100,7 +94,7 @@ namespace Routindo.Plugins.FTP.Tests
         [TestCategory("Integration Test")]
         public void DownloadFileWithAppendTest()
         {
-            var localWriteDir = Environment.ExpandEnvironmentVariables(LocalWorkingDir);
+            var localWriteDir = Path.GetDirectoryName(Environment.ExpandEnvironmentVariables(LocalWorkingDir));
             FtpDownloadAction ftpDownloadAction = new FtpDownloadAction()
             {
                 Id = PluginUtilities.GetUniqueId(),
@@ -145,7 +139,7 @@ namespace Routindo.Plugins.FTP.Tests
         [TestCategory("Integration Test")]
         public void DownloadFileWithTempNameTest()
         {
-            var localWriteDir = Environment.ExpandEnvironmentVariables(LocalWorkingDir);
+            var localWriteDir = Path.GetDirectoryName(Environment.ExpandEnvironmentVariables(LocalWorkingDir));
             FtpDownloadAction ftpDownloadAction = new FtpDownloadAction()
             {
                 Id = PluginUtilities.GetUniqueId(),
@@ -167,6 +161,178 @@ namespace Routindo.Plugins.FTP.Tests
             Assert.IsNotNull(actionResult);
             Assert.IsTrue(actionResult.Result);
             Assert.IsTrue(File.Exists(Path.Combine(Environment.ExpandEnvironmentVariables(LocalDownloadDir), Path.GetFileName(fileNamePath))));
+        }
+
+        [TestMethod]
+        [TestCategory("Integration Test")]
+        public void DownloadFileAndChangeExtensionTest()
+        {
+            var localWriteDir = Path.GetDirectoryName(Environment.ExpandEnvironmentVariables(LocalWorkingDir));
+            FtpDownloadAction ftpDownloadAction = new FtpDownloadAction
+            {
+                Id = PluginUtilities.GetUniqueId(),
+                LoggingService = ServicesContainer.ServicesProvider.GetLoggingService(nameof(FtpDownloadAction)),
+                Host = FtpTestCredentials.Host,
+                Username = FtpTestCredentials.User,
+                Password = FtpTestCredentials.Password,
+                Port = FtpTestCredentials.Port,
+                DirectoryPath = LocalDownloadDir
+            };
+
+            ftpDownloadAction.RenameDownloaded = true;
+            ftpDownloadAction.RenameDownloadedExtension = "rtnd";
+            var fileNamePath = CreateTestFile(localWriteDir);
+
+            var actionResult = ftpDownloadAction.Execute(ArgumentCollection.New()
+                .WithArgument(FtpDownloadActionExecutionArgs.RemoteFilesCollection, new List<string>() { Path.GetFileName(fileNamePath) })
+            );
+
+            Assert.IsNotNull(actionResult);
+            Assert.IsTrue(actionResult.Result);
+        }
+
+        [TestMethod]
+        [TestCategory("Integration Test")]
+        public void DownloadFileAndChangePrefixTest()
+        {
+            var localWriteDir = Path.GetDirectoryName(Environment.ExpandEnvironmentVariables(LocalWorkingDir));
+            FtpDownloadAction ftpDownloadAction = new FtpDownloadAction
+            {
+                Id = PluginUtilities.GetUniqueId(),
+                LoggingService = ServicesContainer.ServicesProvider.GetLoggingService(nameof(FtpDownloadAction)),
+                Host = FtpTestCredentials.Host,
+                Username = FtpTestCredentials.User,
+                Password = FtpTestCredentials.Password,
+                Port = FtpTestCredentials.Port,
+                DirectoryPath = LocalDownloadDir
+            };
+
+            ftpDownloadAction.RenameDownloaded = true;
+            ftpDownloadAction.RenameDownloadedPrefix = "ROUTINDO_";
+            var fileNamePath = CreateTestFile(localWriteDir);
+
+            var actionResult = ftpDownloadAction.Execute(ArgumentCollection.New()
+                .WithArgument(FtpDownloadActionExecutionArgs.RemoteFilesCollection, new List<string>() { Path.GetFileName(fileNamePath) })
+            );
+
+            Assert.IsNotNull(actionResult);
+            Assert.IsTrue(actionResult.Result);
+        }
+
+        [TestMethod]
+        [TestCategory("Integration Test")]
+        public void DownloadFileAndChangePrefixAndExtensionTest()
+        {
+            var localWriteDir = Path.GetDirectoryName(Environment.ExpandEnvironmentVariables(LocalWorkingDir));
+            FtpDownloadAction ftpDownloadAction = new FtpDownloadAction
+            {
+                Id = PluginUtilities.GetUniqueId(),
+                LoggingService = ServicesContainer.ServicesProvider.GetLoggingService(nameof(FtpDownloadAction)),
+                Host = FtpTestCredentials.Host,
+                Username = FtpTestCredentials.User,
+                Password = FtpTestCredentials.Password,
+                Port = FtpTestCredentials.Port,
+                DirectoryPath = LocalDownloadDir
+            };
+
+            ftpDownloadAction.RenameDownloaded = true;
+            ftpDownloadAction.RenameDownloadedPrefix = "ROUTINDO_";
+            ftpDownloadAction.RenameDownloadedExtension = "rtnd";
+            var fileNamePath = CreateTestFile(localWriteDir);
+
+            var actionResult = ftpDownloadAction.Execute(ArgumentCollection.New()
+                .WithArgument(FtpDownloadActionExecutionArgs.RemoteFilesCollection, new List<string>() { Path.GetFileName(fileNamePath) })
+            );
+
+            Assert.IsNotNull(actionResult);
+            Assert.IsTrue(actionResult.Result);
+        }
+
+        [TestMethod]
+        [TestCategory("Integration Test")]
+        public void DownloadFileFromWorkingDirAndChangePrefixAndExtensionTest()
+        {
+            var localWriteDir = Environment.ExpandEnvironmentVariables(LocalWorkingDir);
+            FtpDownloadAction ftpDownloadAction = new FtpDownloadAction
+            {
+                Id = PluginUtilities.GetUniqueId(),
+                LoggingService = ServicesContainer.ServicesProvider.GetLoggingService(nameof(FtpDownloadAction)),
+                Host = FtpTestCredentials.Host,
+                Username = FtpTestCredentials.User,
+                Password = FtpTestCredentials.Password,
+                Port = FtpTestCredentials.Port,
+                DirectoryPath = LocalDownloadDir,
+                RemoteWorkingDir = "test"
+            };
+
+            ftpDownloadAction.RenameDownloaded = true;
+            ftpDownloadAction.RenameDownloadedPrefix = "ROUTINDO_";
+            ftpDownloadAction.RenameDownloadedExtension = "rtnd";
+            var fileNamePath = CreateTestFile(localWriteDir);
+
+            var actionResult = ftpDownloadAction.Execute(ArgumentCollection.New()
+                .WithArgument(FtpDownloadActionExecutionArgs.RemoteFilesCollection, new List<string>() { Path.GetFileName(fileNamePath) })
+            );
+
+            Assert.IsNotNull(actionResult);
+            Assert.IsTrue(actionResult.Result);
+        }
+
+        [TestMethod]
+        [TestCategory("Integration Test")]
+        public void DownloadFileAndRenameTest()
+        {
+            var localWriteDir = Path.GetDirectoryName(Environment.ExpandEnvironmentVariables(LocalWorkingDir));
+            FtpDownloadAction ftpDownloadAction = new FtpDownloadAction
+            {
+                Id = PluginUtilities.GetUniqueId(),
+                LoggingService = ServicesContainer.ServicesProvider.GetLoggingService(nameof(FtpDownloadAction)),
+                Host = FtpTestCredentials.Host,
+                Username = FtpTestCredentials.User,
+                Password = FtpTestCredentials.Password,
+                Port = FtpTestCredentials.Port,
+                DirectoryPath = LocalDownloadDir
+            };
+
+            ftpDownloadAction.RenameDownloaded = true;
+            ftpDownloadAction.RenameDownloadedNewName = "ROUTINDO_";
+            var fileNamePath = CreateTestFile(localWriteDir);
+
+            var actionResult = ftpDownloadAction.Execute(ArgumentCollection.New()
+                .WithArgument(FtpDownloadActionExecutionArgs.RemoteFilesCollection, new List<string>() { Path.GetFileName(fileNamePath) })
+            );
+
+            Assert.IsNotNull(actionResult);
+            Assert.IsTrue(actionResult.Result);
+        }
+
+        [TestMethod]
+        [TestCategory("Integration Test")]
+        public void DownloadFileFromWorkingDirAndRenameTest()
+        {
+            var localWriteDir = Environment.ExpandEnvironmentVariables(LocalWorkingDir);
+            FtpDownloadAction ftpDownloadAction = new FtpDownloadAction
+            {
+                Id = PluginUtilities.GetUniqueId(),
+                LoggingService = ServicesContainer.ServicesProvider.GetLoggingService(nameof(FtpDownloadAction)),
+                Host = FtpTestCredentials.Host,
+                Username = FtpTestCredentials.User,
+                Password = FtpTestCredentials.Password,
+                Port = FtpTestCredentials.Port,
+                DirectoryPath = LocalDownloadDir,
+                RemoteWorkingDir = "test"
+            };
+
+            ftpDownloadAction.RenameDownloaded = true;
+            ftpDownloadAction.RenameDownloadedNewName = "ROUTINDO_";
+            var fileNamePath = CreateTestFile(localWriteDir);
+
+            var actionResult = ftpDownloadAction.Execute(ArgumentCollection.New()
+                .WithArgument(FtpDownloadActionExecutionArgs.RemoteFilesCollection, new List<string>() { Path.GetFileName(fileNamePath) })
+            );
+
+            Assert.IsNotNull(actionResult);
+            Assert.IsTrue(actionResult.Result);
         }
 
         private static string CreateTestFile(string localWriteDir)

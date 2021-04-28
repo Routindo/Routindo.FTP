@@ -49,6 +49,14 @@ namespace Routindo.Plugins.FTP.Components.Actions.Download
         [Argument(FtpDownloadActionArgs.MoveDownloaded, false)] public bool MoveDownloaded { get; set; }
         [Argument(FtpDownloadActionArgs.MoveDownloadedPath, false)] public string MoveDownloadedPath { get; set; }
 
+        [Argument(FtpDownloadActionArgs.RenameDownloaded, false)] public bool RenameDownloaded { get; set; }
+
+        [Argument(FtpDownloadActionArgs.RenameDownloadedExtension, false)] public string RenameDownloadedExtension { get; set; }
+
+        [Argument(FtpDownloadActionArgs.RenameDownloadedPrefix, false)] public string RenameDownloadedPrefix { get; set; }
+
+        [Argument(FtpDownloadActionArgs.RenameDownloadedNewName, false)] public string RenameDownloadedNewName { get; set; }
+
         public ActionResult Execute(ArgumentCollection arguments)
         {
             try
@@ -118,12 +126,44 @@ namespace Routindo.Plugins.FTP.Components.Actions.Download
                             failedFiles.Add(remotePath);
                     }
 
-                    if(MoveDownloaded || DeleteDownloaded)
+                    if(MoveDownloaded || DeleteDownloaded || RenameDownloaded)
                         foreach (var downloadedFile in downloadedFiles)
                         {
                             if (DeleteDownloaded) ftpClient.DeleteFile(downloadedFile);
-                            if (MoveDownloaded && !string.IsNullOrWhiteSpace(MoveDownloadedPath))
+                            else if (MoveDownloaded && !string.IsNullOrWhiteSpace(MoveDownloadedPath))
                                 ftpClient.MoveFile(downloadedFile, UriHelper.BuildPath(MoveDownloadedPath, Path.GetFileName(downloadedFile)));
+                            else if (RenameDownloaded)
+                            {
+                                LoggingService.Debug($"Trying to rename remote file {downloadedFile}");
+                                var remoteParentPath = UriHelper.GetParentUriString(downloadedFile);
+                                if (!string.IsNullOrWhiteSpace(RenameDownloadedNewName))
+                                {
+                                    LoggingService.Debug($"Renaming remote file {downloadedFile} to {RenameDownloadedNewName}");
+                                    var newName = UriHelper.BuildPath(remoteParentPath, RenameDownloadedNewName);
+                                    ftpClient.Rename(downloadedFile, newName);
+                                    LoggingService.Debug($"Renamed file {downloadedFile} to {newName}");
+                                }
+                                else
+                                {
+                                    LoggingService.Debug($"Trying to apply prefix or extension to remote file {downloadedFile}");
+                                    var fileName = Path.GetFileName(downloadedFile);
+                                    if (!string.IsNullOrWhiteSpace(RenameDownloadedExtension))
+                                    {
+                                        LoggingService.Debug($"Changing extension to {RenameDownloadedExtension}");
+                                        fileName = Path.ChangeExtension(fileName, RenameDownloadedExtension);
+                                    }
+
+                                    if (!string.IsNullOrWhiteSpace(RenameDownloadedPrefix))
+                                    {
+                                        LoggingService.Debug($"Applying prefix to {RenameDownloadedPrefix}");
+                                        fileName = $"{RenameDownloadedPrefix}{fileName}";
+                                    }
+                                    LoggingService.Debug($"Renaming remote file {downloadedFile} to {fileName}");
+                                    var newName = UriHelper.BuildPath(remoteParentPath, fileName);
+                                    ftpClient.Rename(downloadedFile, newName); 
+                                    LoggingService.Debug($"Renamed file {downloadedFile} to {newName}");
+                                }
+                            }
                         }
                 }
 
