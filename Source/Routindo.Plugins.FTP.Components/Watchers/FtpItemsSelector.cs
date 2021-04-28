@@ -22,7 +22,8 @@ namespace Routindo.Plugins.FTP.Components.Watchers
 
         [Argument(FtpItemsSelectorArgs.RemoteWorkingDir)] public string RemoteWorkingDir { get; set; }
 
-        [Argument(FtpItemsSelectorArgs.SelectFiles)]  public bool SelectFiles { get; set; }
+        [Argument(FtpItemsSelectorArgs.SelectFiles)] public bool SelectFiles { get; set; } = true;
+
         [Argument(FtpItemsSelectorArgs.SelectDirectories)] public bool SelectDirectories { get; set; }
 
         [Argument(FtpItemsSelectorArgs.SortingCriteria)] public ItemsSelectionSortingCriteria SortingCriteria { get; set; }
@@ -48,6 +49,7 @@ namespace Routindo.Plugins.FTP.Components.Watchers
                         ftpClient.SetWorkingDirectory(RemoteWorkingDir);
 
                     var listing = ftpClient.GetListing().ToList();
+                    Logger.Debug($"First Listing: {listing.Count}");
                     List<FtpFileSystemObjectType> targetTypes = new List<FtpFileSystemObjectType>();
 
                     if (SelectFiles)
@@ -57,9 +59,9 @@ namespace Routindo.Plugins.FTP.Components.Watchers
                         targetTypes.Add(FtpFileSystemObjectType.Directory);
 
                     listing = listing.Where(item => targetTypes.Contains(item.Type)).ToList();
-
+                    Logger.Debug($"Limited by type: {listing.Count}");
                     listing = GetFilesFilteredByTime(listing);
-
+                    Logger.Debug($"Filtered per time: {listing.Count}");
                     items = GetSortedFiles(listing)
                         .Take(MaximumFiles)
                         .Select(e => e.FullName).ToList();

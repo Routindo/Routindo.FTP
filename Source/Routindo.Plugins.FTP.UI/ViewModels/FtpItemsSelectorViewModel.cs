@@ -9,7 +9,7 @@ using Routindo.Plugins.FTP.UI.Enums;
 
 namespace Routindo.Plugins.FTP.UI.ViewModels
 {
-    public class FtpItemsSelectorViewModel: PluginConfiguratorViewModelBase
+    public abstract class FtpItemsSelectorViewModel: PluginConfiguratorViewModelBase
     {
         private string _host;
         private string _username;
@@ -492,6 +492,8 @@ namespace Routindo.Plugins.FTP.UI.ViewModels
                 .WithArgument(FtpItemsSelectorArgs.Password, Password)
                 .WithArgument(FtpItemsSelectorArgs.RemoteWorkingDir, RemoteWorkingDir)
                 .WithArgument(FtpItemsSelectorArgs.MaximumFiles, MaximumFiles)
+                .WithArgument(FtpItemsSelectorArgs.SelectFiles, true)
+                .WithArgument(FtpItemsSelectorArgs.SelectDirectories, false)
                 .WithArgument(FtpItemsSelectorArgs.SortingCriteria, SortingCriteria);
 
             if (FilterByCreatedBefore)
@@ -554,7 +556,11 @@ namespace Routindo.Plugins.FTP.UI.ViewModels
                 Password = arguments.GetValue<string>(FtpItemsSelectorArgs.Password);
 
             if (arguments.HasArgument(FtpItemsSelectorArgs.Port))
-                Port = arguments.GetValue<int>(FtpItemsSelectorArgs.Port);
+            {
+                var port = arguments.GetValue<int>(FtpItemsSelectorArgs.Port);
+                if (port > 0)
+                    Port = port;
+            }
 
             if (arguments.HasArgument(FtpItemsSelectorArgs.RemoteWorkingDir))
                 RemoteWorkingDir = arguments.GetValue<string>(FtpItemsSelectorArgs.RemoteWorkingDir);

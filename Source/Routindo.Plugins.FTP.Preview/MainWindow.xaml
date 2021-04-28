@@ -24,6 +24,13 @@
                     </views:DownloadFileActionView.DataContext>
                 </views:DownloadFileActionView>
             </TabItem>
+            <TabItem Header="Watcher">
+                <views:FtpWatcherView>
+                    <views:FtpWatcherView.DataContext>
+                        <viewModels:FtpWatcherViewModel/>
+                    </views:FtpWatcherView.DataContext>
+                </views:FtpWatcherView>
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>

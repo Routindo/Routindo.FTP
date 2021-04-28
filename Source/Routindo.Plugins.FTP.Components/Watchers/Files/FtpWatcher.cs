@@ -9,8 +9,7 @@ namespace Routindo.Plugins.FTP.Components.Watchers.Files
 {
     [PluginItemInfo(ComponentUniqueId, "FTP Remote Watcher",
          "Watch Remote directory and check if contains items - files or directories -"),
-     ResultArgumentsClass(typeof(FtpWatcherResultArgs))
-    ]
+     ResultArgumentsClass(typeof(FtpWatcherResultArgs))]
     public class FtpWatcher: FtpItemsSelector, IWatcher 
     {
         // ReSharper disable once InconsistentNaming

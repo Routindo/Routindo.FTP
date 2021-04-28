@@ -15,11 +15,15 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Source\Routindo.Plugins.FTP.Components\Routindo.Plugins.FTP.Components.csproj" />
+    <ProjectReference Include="..\..\Source\Routindo.Plugins.FTP.UI\Routindo.Plugins.FTP.UI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Routindo.Contract">
       <HintPath>..\..\Libs\Shared\Routindo.Contract.dll</HintPath>
+    </Reference>
+    <Reference Include="Routindo.Contract.UI">
+      <HintPath>..\..\Libs\Shared\Routindo.Contract.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
 
