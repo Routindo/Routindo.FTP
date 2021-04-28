@@ -20,6 +20,10 @@ namespace Routindo.Plugins.FTP.UI.ViewModels
         private bool _deleteDownloaded;
         private bool _moveDownloaded;
         private string _moveDownloadedPath;
+        private bool _renameDownloaded;
+        private string _renameDownloadedExtension;
+        private string _renameDownloadedPrefix;
+        private string _renameDownloadedNewName;
 
         public DownloadFileActionViewModel()
         {
@@ -180,6 +184,67 @@ namespace Routindo.Plugins.FTP.UI.ViewModels
             }
         }
 
+        public bool RenameDownloaded
+        {
+            get => _renameDownloaded;
+            set
+            {
+                _renameDownloaded = value;
+                if (!_renameDownloaded)
+                {
+                    RenameDownloadedNewName = string.Empty;
+                    RenameDownloadedPrefix = string.Empty;
+                    RenameDownloadedExtension = string.Empty;
+                }
+                else
+                {
+                    ClearPropertyErrors(nameof(RenameDownloadedNewName));
+                    ValidateNonNullOrEmptyString(RenameDownloadedNewName, nameof(RenameDownloadedNewName));
+                    OnPropertyChanged(nameof(RenameDownloadedNewName));
+
+                    ClearPropertyErrors(nameof(RenameDownloadedPrefix));
+                    ValidateNonNullOrEmptyString(RenameDownloadedPrefix, nameof(RenameDownloadedPrefix));
+                    OnPropertyChanged(nameof(RenameDownloadedPrefix));
+
+                    ClearPropertyErrors(nameof(RenameDownloadedExtension));
+                    ValidateNonNullOrEmptyString(RenameDownloadedExtension, nameof(RenameDownloadedExtension));
+                    OnPropertyChanged(nameof(RenameDownloadedExtension));
+                }
+                OnPropertyChanged();
+            }
+        }
+
+        public string RenameDownloadedExtension
+        {
+            get => _renameDownloadedExtension;
+            set
+            {
+                _renameDownloadedExtension = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string RenameDownloadedPrefix
+        {
+            get => _renameDownloadedPrefix;
+            set
+            {
+                _renameDownloadedPrefix = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string RenameDownloadedNewName
+        {
+            get => _renameDownloadedNewName;
+            set
+            {
+                _renameDownloadedNewName = value;
+                OnPropertyChanged();
+            }
+        }
+
+
         public override void Configure()
         {
             this.InstanceArguments = ArgumentCollection.New()
@@ -195,6 +260,10 @@ namespace Routindo.Plugins.FTP.UI.ViewModels
                     .WithArgument(FtpDownloadActionArgs.DeleteDownloaded, DeleteDownloaded)
                     .WithArgument(FtpDownloadActionArgs.MoveDownloaded, MoveDownloaded)
                     .WithArgument(FtpDownloadActionArgs.MoveDownloadedPath, MoveDownloadedPath)
+                    .WithArgument(FtpDownloadActionArgs.RenameDownloaded, RenameDownloaded)
+                    .WithArgument(FtpDownloadActionArgs.RenameDownloadedNewName, RenameDownloadedNewName)
+                    .WithArgument(FtpDownloadActionArgs.RenameDownloadedPrefix, RenameDownloadedPrefix)
+                    .WithArgument(FtpDownloadActionArgs.RenameDownloadedExtension, RenameDownloadedExtension)
                 ;
         }
 
@@ -235,6 +304,18 @@ namespace Routindo.Plugins.FTP.UI.ViewModels
 
             if (arguments.HasArgument(FtpDownloadActionArgs.MoveDownloadedPath))
                 MoveDownloadedPath = arguments.GetValue<string>(FtpDownloadActionArgs.MoveDownloadedPath);
+
+            if (arguments.HasArgument(FtpDownloadActionArgs.RenameDownloaded))
+                RenameDownloaded = arguments.GetValue<bool>(FtpDownloadActionArgs.RenameDownloaded);
+
+            if (arguments.HasArgument(FtpDownloadActionArgs.RenameDownloadedNewName))
+                RenameDownloadedNewName = arguments.GetValue<string>(FtpDownloadActionArgs.RenameDownloadedNewName);
+
+            if (arguments.HasArgument(FtpDownloadActionArgs.RenameDownloadedPrefix))
+                RenameDownloadedPrefix = arguments.GetValue<string>(FtpDownloadActionArgs.RenameDownloadedPrefix);
+
+            if (arguments.HasArgument(FtpDownloadActionArgs.RenameDownloadedExtension))
+                RenameDownloadedExtension = arguments.GetValue<string>(FtpDownloadActionArgs.RenameDownloadedExtension);
         }
     }
 }
