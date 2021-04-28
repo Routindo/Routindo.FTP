@@ -28,51 +28,84 @@
         <TextBlock Text="FTP Download Configurator"  FontWeight="Bold" FontSize="16"/>
 
         <StackPanel Grid.Row="1" Grid.IsSharedSizeScope="True">
-            <GroupBox Header="Connection">
-                <StackPanel Orientation="Vertical" Grid.IsSharedSizeScope="True">
-                    <StackPanel Orientation="Horizontal">
-                        <Grid Margin="10 5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"  SharedSizeGroup="Label"/>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Label Content="Host" />
-                            <TextBox Grid.Column="1" Width="200" Validation.ErrorTemplate="{StaticResource ErrorControlTemplate}"
+            <TabControl TabStripPlacement="Left">
+                <TabItem Header="Connection">
+                    <StackPanel Orientation="Vertical" Grid.IsSharedSizeScope="True">
+                        <StackPanel Orientation="Horizontal">
+                            <Grid Margin="10 5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"  SharedSizeGroup="Label"/>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Label Content="Host" />
+                                <TextBox Grid.Column="1" Width="200" Validation.ErrorTemplate="{StaticResource ErrorControlTemplate}"
                                  Text="{Binding Path=Host, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}" />
-                            <!--<TextBlock Grid.Column="3" Text="Host name or IP Address" />-->
-                        </Grid>
+                                <!--<TextBlock Grid.Column="3" Text="Host name or IP Address" />-->
+                            </Grid>
 
-                        <Grid Margin="10 5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"  SharedSizeGroup="Label"/>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Label Content="Port" />
-                            <controls:IntegerBox Grid.Column="1" Width="60" 
+                            <Grid Margin="10 5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"  SharedSizeGroup="Label"/>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Label Content="Port" />
+                                <controls:IntegerBox Grid.Column="1" Width="60" 
                                                  Validation.ErrorTemplate="{StaticResource ErrorControlTemplate}"
                                                  Value="{Binding Path=Port, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
                                                  AllowManualEdit="True" Increment="1" Minimum="1"
                             />
-                            <TextBlock Grid.Column="3" Text="Default FTP Port : 21" />
-                        </Grid>
-                    </StackPanel>
-                    
-                    <StackPanel Orientation="Horizontal">
-                        <Grid Margin="10 5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"  SharedSizeGroup="Label"/>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Label Content="Username" />
-                            <TextBox Grid.Column="1" Width="200" Validation.ErrorTemplate="{StaticResource ErrorControlTemplate}"
+                                <TextBlock Grid.Column="3" Text="Default FTP Port : 21" />
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Grid Margin="10 5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"  SharedSizeGroup="Label"/>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Label Content="Username" />
+                                <TextBox Grid.Column="1" Width="200" Validation.ErrorTemplate="{StaticResource ErrorControlTemplate}"
                                  Text="{Binding Path=Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}" />
-                            <!--<TextBlock Grid.Column="3" Text="Keep username empty for annonymous connection" />-->
+                                <!--<TextBlock Grid.Column="3" Text="Keep username empty for annonymous connection" />-->
+                            </Grid>
+
+                            <Grid Margin="10 5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"  SharedSizeGroup="Label"/>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Label Content="Password" />
+                                <TextBox Grid.Column="1" Width="200" Validation.ErrorTemplate="{StaticResource ErrorControlTemplate}"
+                                 Text="{Binding Path=Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}" />
+                                <!--<TextBlock Grid.Column="3" Text="Host name or IP Address" />-->
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="Configuration">
+                    <StackPanel Orientation="Vertical" Grid.IsSharedSizeScope="True">
+                        <Grid Margin="10 5" VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"  SharedSizeGroup="Label"/>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Local Directory" />
+                            <TextBox Grid.Column="1" Width="300" Validation.ErrorTemplate="{StaticResource ErrorControlTemplate}"
+                                 Text="{Binding Path=DirectoryPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}" />
+                            <Button Grid.Column="2" Content="Select" VerticalAlignment="Center"
+                                    Command="{Binding Path=SelectLocalDirectoryCommand}" />
+                            <TextBlock Grid.Column="3" Text="The path where to download the file" />
                         </Grid>
 
                         <Grid Margin="10 5">
@@ -82,77 +115,76 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Label Content="Password" />
-                            <TextBox Grid.Column="1" Width="200" Validation.ErrorTemplate="{StaticResource ErrorControlTemplate}"
-                                 Text="{Binding Path=Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}" />
-                            <!--<TextBlock Grid.Column="3" Text="Host name or IP Address" />-->
-                        </Grid>
-                    </StackPanel>
-                </StackPanel>
-            </GroupBox>
-            <GroupBox Header="Configuration">
-                <StackPanel Orientation="Vertical" Grid.IsSharedSizeScope="True">
-                    <Grid Margin="10 5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"  SharedSizeGroup="Label"/>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Label Content="Local Directory" />
-                        <TextBox Grid.Column="1" Width="300" Validation.ErrorTemplate="{StaticResource ErrorControlTemplate}"
-                                 Text="{Binding Path=DirectoryPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}" />
-                        <Button Grid.Column="2" Content="Select" Command="{Binding Path=SelectLocalDirectoryCommand}"></Button>
-                        <TextBlock Grid.Column="3" Text="The path where to download the file" />
-                    </Grid>
-
-                    <Grid Margin="10 5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"  SharedSizeGroup="Label"/>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Label Content="Remote Directory" />
-                        <TextBox Grid.Column="1" Width="300" Validation.ErrorTemplate="{StaticResource ErrorControlTemplate}"
+                            <Label Content="Remote Directory" />
+                            <TextBox Grid.Column="1" Width="300" Validation.ErrorTemplate="{StaticResource ErrorControlTemplate}"
                                  Text="{Binding Path=RemoteWorkingDir, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}" />
-                        <TextBlock Grid.Column="3" Text="Remote directory containing the files to download" />
-                    </Grid>
+                            <TextBlock Grid.Column="3" Text="Remote directory containing the files to download" />
+                        </Grid>
 
-                    <Grid Margin="10 5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"   SharedSizeGroup="Label"  />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Label Content="Overwrite File" 
+                        <Grid Margin="10 5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"   SharedSizeGroup="Label"  />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Overwrite File" 
                        
                             />
-                        <CheckBox Grid.Column="2" 
+                            <CheckBox Grid.Column="2" 
                                       IsChecked="{Binding Path=Overwrite, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                       d:IsChecked="true" 
                                       Content="Overwrite existing local file if exists"
                                       FontStyle="Italic"
                             />
-                    </Grid>
-                    <Grid Margin="10 5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"   SharedSizeGroup="Label"  />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Label Content="Use Temporary name" 
+                        </Grid>
+                        <Grid Margin="10 5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"   SharedSizeGroup="Label"  />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Use Temporary name" 
                        
                             />
-                        <CheckBox Grid.Column="2"
+                            <CheckBox Grid.Column="2"
                                       IsChecked="{Binding Path=UseTemporaryName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                       d:IsChecked="true" 
                                       Content="Download file using local temporary name, then rename it once downloaded"
                                       FontStyle="Italic"
                             />
-                    </Grid>
-                </StackPanel>
-            </GroupBox>
+                        </Grid>
+                        <GroupBox Header="After Download">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <StackPanel.Resources>
+                                        <Style TargetType="RadioButton">
+                                            <Setter Property="Margin" Value="10 5" />
+                                        </Style>
+                                    </StackPanel.Resources>
+                                    <RadioButton Content="Delete File" GroupName="AfterDownloadAction" 
+                                                 IsChecked="{Binding Path=DeleteDownloaded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    <RadioButton Content="Move File" GroupName="AfterDownloadAction" 
+                                                 IsChecked="{Binding Path=MoveDownloaded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+
+                                <Grid Margin="10 5" 
+                                      IsEnabled="{Binding Path=MoveDownloaded, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"  SharedSizeGroup="Label"/>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label Content="Move to Directory" />
+                                    <TextBox Grid.Column="1" Width="300" Validation.ErrorTemplate="{StaticResource ErrorControlTemplate}"
+                                             Text="{Binding Path=MoveDownloadedPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}" />
+                                    <TextBlock Grid.Column="3" Text="Remote directory where to move the downloaded file" />
+                                </Grid>
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                </TabItem>
+            </TabControl>
         </StackPanel>
        
     </Grid>

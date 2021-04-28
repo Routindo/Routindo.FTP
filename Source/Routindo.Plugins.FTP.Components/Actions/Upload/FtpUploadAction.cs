@@ -8,7 +8,7 @@ using Routindo.Contract.Attributes;
 using Routindo.Contract.Exceptions;
 using Routindo.Contract.Services;
 
-namespace Routindo.Plugins.FTP.Components.Actions.UploadFile
+namespace Routindo.Plugins.FTP.Components.Actions.Upload
 {
     [PluginItemInfo(ComponentUniqueId, "FTP Uploader",
          "Upload a File to remote host via FTP"),

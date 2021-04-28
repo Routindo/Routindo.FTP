@@ -1,4 +1,4 @@
-﻿namespace Routindo.Plugins.FTP.Components.Actions.DownloadFile
+﻿namespace Routindo.Plugins.FTP.Components.Actions.Download
 {
     public static class FtpDownloadActionArgs
     {
@@ -19,6 +19,9 @@
 
         public const string UseTemporaryName = nameof(UseTemporaryName);
 
-        
+
+        public const string DeleteDownloaded = nameof(DeleteDownloaded);
+        public const string MoveDownloaded = nameof(MoveDownloaded);
+        public const string MoveDownloadedPath = nameof(MoveDownloadedPath); 
     }
 }

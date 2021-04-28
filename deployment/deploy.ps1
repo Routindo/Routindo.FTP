@@ -1,6 +1,6 @@
 [CmdletBinding()] 
 Param(
-	$Clean = false",
+	$Clean = "false",
     $Restore = "false",
     $UpdateLibs = "true",
     $Build = "false",

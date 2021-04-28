@@ -1,6 +1,6 @@
 ﻿using Routindo.Contract.Attributes;
-using Routindo.Plugins.FTP.Components.Actions.DownloadFile;
-using Routindo.Plugins.FTP.Components.Actions.UploadFile;
+using Routindo.Plugins.FTP.Components.Actions.Download;
+using Routindo.Plugins.FTP.Components.Actions.Upload;
 using Routindo.Plugins.FTP.Components.Watchers.Files;
 using Routindo.Plugins.FTP.UI.Views;
 

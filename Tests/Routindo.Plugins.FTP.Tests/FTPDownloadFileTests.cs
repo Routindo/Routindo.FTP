@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Routindo.Contract;
 using Routindo.Contract.Arguments;
 using Routindo.Contract.Services;
-using Routindo.Plugins.FTP.Components.Actions.DownloadFile;
+using Routindo.Plugins.FTP.Components.Actions.Download;
 
 namespace Routindo.Plugins.FTP.Tests
 {

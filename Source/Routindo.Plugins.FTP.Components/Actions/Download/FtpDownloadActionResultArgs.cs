@@ -1,4 +1,4 @@
-﻿namespace Routindo.Plugins.FTP.Components.Actions.DownloadFile
+﻿namespace Routindo.Plugins.FTP.Components.Actions.Download
 {
     public static class FtpDownloadActionResultArgs
     {

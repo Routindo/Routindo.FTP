@@ -1,4 +1,4 @@
-﻿namespace Routindo.Plugins.FTP.Components.Actions.UploadFile
+﻿namespace Routindo.Plugins.FTP.Components.Actions.Upload
 {
     public static class FtpUploadActionInstanceArgs
     {

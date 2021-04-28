@@ -9,7 +9,7 @@ using Routindo.Contract.Attributes;
 using Routindo.Contract.Exceptions;
 using Routindo.Contract.Services;
 
-namespace Routindo.Plugins.FTP.Components.Actions.DownloadFile
+namespace Routindo.Plugins.FTP.Components.Actions.Download
 {
     [PluginItemInfo(ComponentUniqueId, "FTP File Downloader",
          "Download one or multiple files from remote host via FTP"),
@@ -27,59 +27,27 @@ namespace Routindo.Plugins.FTP.Components.Actions.DownloadFile
         public string Id { get; set; }
         public ILoggingService LoggingService { get; set; }
 
+        [Argument(FtpDownloadActionArgs.Host, true)] public string Host { get; set; }
 
-        /// <summary>
-        /// Gets or sets the host.
-        /// </summary>
-        /// <value>
-        /// The host.
-        /// </value>
-        [Argument(FtpDownloadActionArgs.Host, true)]
-        public string Host { get; set; }
+        [Argument(FtpDownloadActionArgs.Port, true)] public int Port { get; set; } = DEFAULT_FTP_PORT;
 
-        /// <summary>
-        /// Gets or sets the port.
-        /// </summary>
-        /// <value>
-        /// The port.
-        /// </value>
-        [Argument(FtpDownloadActionArgs.Port, true)]
-        public int Port { get; set; } = DEFAULT_FTP_PORT;
+        [Argument(FtpDownloadActionArgs.Username, true)] public string Username { get; set; }
 
+        [Argument(FtpDownloadActionArgs.Password, true)] public string Password { get; set; }
 
+        [Argument(FtpDownloadActionArgs.RemoteWorkingDir, false)] public string RemoteWorkingDir { get; set; }
 
-        /// <summary>
-        /// Gets or sets the username.
-        /// </summary>
-        /// <value>
-        /// The username.
-        /// </value>
-        [Argument(FtpDownloadActionArgs.Username, true)]
-        public string Username { get; set; }
+        [Argument(FtpDownloadActionArgs.DirectoryPath, true)] public string DirectoryPath { get; set; }
 
-        /// <summary>
-        /// Gets or sets the password.
-        /// </summary>
-        /// <value>
-        /// The password.
-        /// </value>
-        [Argument(FtpDownloadActionArgs.Password, true)]
-        public string Password { get; set; }
+        [Argument(FtpDownloadActionArgs.Overwrite, false)] public bool Overwrite { get; set; }
 
-        [Argument(FtpDownloadActionArgs.RemoteWorkingDir, false)]
-        public string RemoteWorkingDir { get; set; }
+        [Argument(FtpDownloadActionArgs.Append, false)] public bool Append { get; set; }
 
-        [Argument(FtpDownloadActionArgs.DirectoryPath, true)]
-        public string DirectoryPath { get; set; }
+        [Argument(FtpDownloadActionArgs.UseTemporaryName, false)] public bool UseTemporaryName { get; set; }
 
-        [Argument(FtpDownloadActionArgs.Overwrite, true)]
-        public bool Overwrite { get; set; }
-
-        [Argument(FtpDownloadActionArgs.Append, true)]
-        public bool Append { get; set; }
-
-        [Argument(FtpDownloadActionArgs.UseTemporaryName, true)]
-        public bool UseTemporaryName { get; set; }
+        [Argument(FtpDownloadActionArgs.DeleteDownloaded, false)] public bool DeleteDownloaded { get; set; }
+        [Argument(FtpDownloadActionArgs.MoveDownloaded, false)] public bool MoveDownloaded { get; set; }
+        [Argument(FtpDownloadActionArgs.MoveDownloadedPath, false)] public string MoveDownloadedPath { get; set; }
 
         public ActionResult Execute(ArgumentCollection arguments)
         {
@@ -149,6 +117,14 @@ namespace Routindo.Plugins.FTP.Components.Actions.DownloadFile
                         if (ftpStatus == FtpStatus.Failed)
                             failedFiles.Add(remotePath);
                     }
+
+                    if(MoveDownloaded || DeleteDownloaded)
+                        foreach (var downloadedFile in downloadedFiles)
+                        {
+                            if (DeleteDownloaded) ftpClient.DeleteFile(downloadedFile);
+                            if (MoveDownloaded && !string.IsNullOrWhiteSpace(MoveDownloadedPath))
+                                ftpClient.MoveFile(downloadedFile, UriHelper.BuildPath(MoveDownloadedPath, Path.GetFileName(downloadedFile)));
+                        }
                 }
 
                 if (downloadedFiles.Any())

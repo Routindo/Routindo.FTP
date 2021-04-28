@@ -17,4 +17,9 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Actions\Delete\" />
+    <Folder Include="Actions\Move\" />
+  </ItemGroup>
+
 </Project>
