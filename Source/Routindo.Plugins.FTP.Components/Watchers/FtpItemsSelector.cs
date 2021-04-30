@@ -12,6 +12,7 @@ namespace Routindo.Plugins.FTP.Components.Watchers
         protected abstract ILoggingService Logger { get; }
 
         public const int DefaultFtpPort = 21; 
+
         [Argument(FtpItemsSelectorArgs.Host, true)] public string Host { get; set; }
 
         [Argument(FtpItemsSelectorArgs.Port, true)] public int Port { get; set; } = DefaultFtpPort;
@@ -21,6 +22,8 @@ namespace Routindo.Plugins.FTP.Components.Watchers
         [Argument(FtpItemsSelectorArgs.Password, true)] public string Password { get; set; }
 
         [Argument(FtpItemsSelectorArgs.RemoteWorkingDir)] public string RemoteWorkingDir { get; set; }
+
+        [Argument(FtpItemsSelectorArgs.SearchPattern)] public string SearchPattern { get; set; } = string.Empty;
 
         [Argument(FtpItemsSelectorArgs.SelectFiles)] public bool SelectFiles { get; set; } = true;
 
@@ -48,7 +51,7 @@ namespace Routindo.Plugins.FTP.Components.Watchers
                     if (!string.IsNullOrWhiteSpace(RemoteWorkingDir))
                         ftpClient.SetWorkingDirectory(RemoteWorkingDir);
 
-                    var listing = ftpClient.GetListing().ToList();
+                    var listing = ftpClient.GetListing(SearchPattern).ToList();
                     // Logger.Debug($"First Listing: {listing.Count}");
                     List<FtpFileSystemObjectType> targetTypes = new List<FtpFileSystemObjectType>();
 

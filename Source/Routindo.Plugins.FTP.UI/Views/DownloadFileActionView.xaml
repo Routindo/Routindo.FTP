@@ -15,6 +15,9 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Styles.xaml" />
                 <ResourceDictionary Source="../Templates.xaml" />
+                <ResourceDictionary>
+                    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+                </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
 
@@ -107,7 +110,6 @@
                                     Command="{Binding Path=SelectLocalDirectoryCommand}" />
                             <TextBlock Grid.Column="3" Text="The path where to download the file" />
                         </Grid>
-
                         <Grid Margin="10 5">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"  SharedSizeGroup="Label"/>
@@ -120,7 +122,6 @@
                                  Text="{Binding Path=RemoteWorkingDir, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}" />
                             <TextBlock Grid.Column="3" Text="Remote directory containing the files to download" />
                         </Grid>
-
                         <Grid Margin="10 5">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"   SharedSizeGroup="Label"  />
@@ -153,35 +154,87 @@
                                       FontStyle="Italic"
                             />
                         </Grid>
-                        <GroupBox Header="After Download">
-                            <StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <StackPanel.Resources>
-                                        <Style TargetType="RadioButton">
-                                            <Setter Property="Margin" Value="10 5" />
-                                        </Style>
-                                    </StackPanel.Resources>
-                                    <RadioButton Content="Delete File" GroupName="AfterDownloadAction" 
-                                                 IsChecked="{Binding Path=DeleteDownloaded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    <RadioButton Content="Move File" GroupName="AfterDownloadAction" 
-                                                 IsChecked="{Binding Path=MoveDownloaded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </StackPanel>
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="After Download">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel.Resources>
+                            <Style TargetType="RadioButton">
+                                <Setter Property="Margin" Value="10 5" />
+                            </Style>
+                        </StackPanel.Resources>
+                        <StackPanel Orientation="Horizontal">
+                            
+                            <RadioButton Content="None" GroupName="AfterDownloadAction"
+                                         IsChecked="{Binding Path=KeepDownloaded, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                         />
 
-                                <Grid Margin="10 5" 
-                                      IsEnabled="{Binding Path=MoveDownloaded, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"  SharedSizeGroup="Label"/>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Label Content="Move to Directory" />
-                                    <TextBox Grid.Column="1" Width="300" Validation.ErrorTemplate="{StaticResource ErrorControlTemplate}"
+                            <RadioButton Content="Delete" GroupName="AfterDownloadAction" 
+                                                 IsChecked="{Binding Path=DeleteDownloaded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <RadioButton Content="Move" GroupName="AfterDownloadAction" 
+                                                 IsChecked="{Binding Path=MoveDownloaded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <RadioButton Content="Rename" GroupName="AfterDownloadAction" 
+                                         IsChecked="{Binding Path=RenameDownloaded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+
+                        <Grid Margin="10 5" 
+                                      Visibility="{Binding Path=MoveDownloaded, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"  SharedSizeGroup="Label"/>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Move to Directory" />
+                            <TextBox Grid.Column="1" Width="300" Validation.ErrorTemplate="{StaticResource ErrorControlTemplate}"
                                              Text="{Binding Path=MoveDownloadedPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}" />
-                                    <TextBlock Grid.Column="3" Text="Remote directory where to move the downloaded file" />
-                                </Grid>
-                            </StackPanel>
-                        </GroupBox>
+                            <TextBlock Grid.Column="3" Text="Remote directory where to move the downloaded file" />
+                        </Grid>
+
+                        <Grid Margin="10 5" 
+                              Visibility="{Binding Path=RenameDownloaded, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"  SharedSizeGroup="Label"/>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Label Content="New name" />
+                            <TextBox Grid.Column="1" Width="300" Validation.ErrorTemplate="{StaticResource ErrorControlTemplate}"
+                                     Text="{Binding Path=RenameDownloadedNewName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}" />
+                            <TextBlock Grid.Column="3" Text="Rename the downloaded file remotely" />
+                        </Grid>
+
+                        <Grid Margin="10 5" 
+                              Visibility="{Binding Path=RenameDownloaded, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"  SharedSizeGroup="Label"/>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Prefix" />
+                            <TextBox Grid.Column="1" Width="300" Validation.ErrorTemplate="{StaticResource ErrorControlTemplate}"
+                                     Text="{Binding Path=RenameDownloadedPrefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}" />
+                            <TextBlock Grid.Column="3" Text="Append a prefix to the downloaded file remotely" />
+                        </Grid>
+
+                        <Grid Margin="10 5" 
+                              Visibility="{Binding Path=RenameDownloaded, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"  SharedSizeGroup="Label"/>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Extension" />
+                            <TextBox Grid.Column="1" Width="300" Validation.ErrorTemplate="{StaticResource ErrorControlTemplate}"
+                                     Text="{Binding Path=RenameDownloadedExtension, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}" />
+                            <TextBlock Grid.Column="3" Text="Change extension to the downloaded file remotely" />
+                        </Grid>
+
                     </StackPanel>
                 </TabItem>
             </TabControl>

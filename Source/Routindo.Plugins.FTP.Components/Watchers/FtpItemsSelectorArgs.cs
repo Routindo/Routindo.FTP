@@ -10,6 +10,7 @@
         // Optional Fields 
         public const string Port = nameof(Port);
         public const string RemoteWorkingDir = nameof(RemoteWorkingDir);
+        public const string SearchPattern = nameof(SearchPattern); 
 
         public const string SelectFiles = nameof(SelectFiles);
         public const string SelectDirectories = nameof(SelectDirectories);

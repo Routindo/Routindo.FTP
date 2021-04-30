@@ -198,20 +198,38 @@ namespace Routindo.Plugins.FTP.UI.ViewModels
                 }
                 else
                 {
-                    ClearPropertyErrors(nameof(RenameDownloadedNewName));
-                    ValidateNonNullOrEmptyString(RenameDownloadedNewName, nameof(RenameDownloadedNewName));
-                    OnPropertyChanged(nameof(RenameDownloadedNewName));
-
-                    ClearPropertyErrors(nameof(RenameDownloadedPrefix));
-                    ValidateNonNullOrEmptyString(RenameDownloadedPrefix, nameof(RenameDownloadedPrefix));
-                    OnPropertyChanged(nameof(RenameDownloadedPrefix));
-
-                    ClearPropertyErrors(nameof(RenameDownloadedExtension));
-                    ValidateNonNullOrEmptyString(RenameDownloadedExtension, nameof(RenameDownloadedExtension));
-                    OnPropertyChanged(nameof(RenameDownloadedExtension));
+                    ValidateRenamingCriteria();
                 }
                 OnPropertyChanged();
             }
+        }
+
+        private void ValidateRenamingCriteria()
+        {
+            ValidateRenameDownloadedNewName();
+            ValidateRenameDownloadedPrefix();
+            ValidateRenameDownloadedExtension();
+        }
+
+        private void ValidateRenameDownloadedExtension()
+        {
+            ClearPropertyErrors(nameof(RenameDownloadedExtension));
+            ValidateNonNullOrEmptyString(RenameDownloadedExtension, nameof(RenameDownloadedExtension));
+            OnPropertyChanged(nameof(RenameDownloadedExtension));
+        }
+
+        private void ValidateRenameDownloadedPrefix()
+        {
+            ClearPropertyErrors(nameof(RenameDownloadedPrefix));
+            ValidateNonNullOrEmptyString(RenameDownloadedPrefix, nameof(RenameDownloadedPrefix));
+            OnPropertyChanged(nameof(RenameDownloadedPrefix));
+        }
+
+        private void ValidateRenameDownloadedNewName()
+        {
+            ClearPropertyErrors(nameof(RenameDownloadedNewName));
+            ValidateNonNullOrEmptyString(RenameDownloadedNewName, nameof(RenameDownloadedNewName));
+            OnPropertyChanged(nameof(RenameDownloadedNewName));
         }
 
         public string RenameDownloadedExtension
@@ -219,7 +237,21 @@ namespace Routindo.Plugins.FTP.UI.ViewModels
             get => _renameDownloadedExtension;
             set
             {
+                ClearPropertyErrors(nameof(RenameDownloadedExtension));
+                ClearPropertyErrors(nameof(RenameDownloadedPrefix));
+                ClearPropertyErrors(nameof(RenameDownloadedNewName));
                 _renameDownloadedExtension = value;
+                if (!string.IsNullOrWhiteSpace(_renameDownloadedExtension))
+                {
+                    RenameDownloadedNewName = string.Empty;
+                }
+                else if (string.IsNullOrWhiteSpace(RenameDownloadedNewName)
+                         && string.IsNullOrWhiteSpace(RenameDownloadedPrefix)
+                         && string.IsNullOrWhiteSpace(RenameDownloadedExtension)
+                )
+                {
+                    ValidateRenamingCriteria();
+                }
                 OnPropertyChanged();
             }
         }
@@ -229,7 +261,21 @@ namespace Routindo.Plugins.FTP.UI.ViewModels
             get => _renameDownloadedPrefix;
             set
             {
+                ClearPropertyErrors(nameof(RenameDownloadedExtension));
+                ClearPropertyErrors(nameof(RenameDownloadedPrefix));
+                ClearPropertyErrors(nameof(RenameDownloadedNewName));
                 _renameDownloadedPrefix = value;
+                if (!string.IsNullOrWhiteSpace(_renameDownloadedPrefix))
+                {
+                    RenameDownloadedNewName = string.Empty;
+                }
+                else if (string.IsNullOrWhiteSpace(RenameDownloadedNewName)
+                         && string.IsNullOrWhiteSpace(RenameDownloadedPrefix)
+                         && string.IsNullOrWhiteSpace(RenameDownloadedExtension)
+                )
+                {
+                    ValidateRenamingCriteria();
+                }
                 OnPropertyChanged();
             }
         }
@@ -239,8 +285,32 @@ namespace Routindo.Plugins.FTP.UI.ViewModels
             get => _renameDownloadedNewName;
             set
             {
+                ClearPropertyErrors(nameof(RenameDownloadedExtension));
+                ClearPropertyErrors(nameof(RenameDownloadedPrefix));
+                ClearPropertyErrors(nameof(RenameDownloadedNewName));
                 _renameDownloadedNewName = value;
+                if (!string.IsNullOrWhiteSpace(_renameDownloadedNewName))
+                {
+                    RenameDownloadedPrefix = string.Empty;
+                    RenameDownloadedExtension = string.Empty;
+                }
+                else if (string.IsNullOrWhiteSpace(RenameDownloadedNewName)
+                         && string.IsNullOrWhiteSpace(RenameDownloadedPrefix)
+                         && string.IsNullOrWhiteSpace(RenameDownloadedExtension)
+                )
+                {
+                    ValidateRenamingCriteria();
+                }
+
                 OnPropertyChanged();
+            }
+        }
+
+        public bool KeepDownloaded
+        {
+            get
+            {
+                return !RenameDownloaded && !MoveDownloaded && !DeleteDownloaded;
             }
         }
 
