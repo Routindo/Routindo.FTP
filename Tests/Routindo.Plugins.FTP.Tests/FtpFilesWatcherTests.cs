@@ -65,6 +65,75 @@ namespace Routindo.Plugins.FTP.Tests
 
         [TestMethod]
         [TestCategory("Integration Test")]
+        public void WatchForFilesByPatternTest()
+        {
+            string remoteWorkingDir = "/test";
+            FtpWatcher watcher = new FtpWatcher
+            {
+                Id = PluginUtilities.GetUniqueId(),
+                LoggingService = ServicesContainer.ServicesProvider.GetLoggingService(nameof(FtpWatcher)),
+                Host = FtpTestCredentials.Host,
+                Username = FtpTestCredentials.User,
+                Password = FtpTestCredentials.Password,
+                Port = FtpTestCredentials.Port,
+                RemoteWorkingDir = remoteWorkingDir,
+                SelectFiles = true
+            };
+
+            watcher.SearchPattern = "prefix*.pat";
+
+            var localWriteDir = Path.Combine(Environment.ExpandEnvironmentVariables(LocalWorkingDir), remoteWorkingDir.Trim('/'));
+            var fileNamePath = CreateTestFile(localWriteDir, "prefix", "pat");
+            var otherFileNamePath = CreateTestFile(localWriteDir);
+            var watcherResult = watcher.Watch();
+            Assert.IsNotNull(watcherResult);
+            Assert.AreEqual(true, watcherResult.Result);
+            Assert.IsNotNull(watcherResult.WatchingArguments);
+            Assert.IsTrue(watcherResult.WatchingArguments.HasArgument(FtpWatcherResultArgs.RemoteFilesCollection));
+            Assert.IsTrue(watcherResult.WatchingArguments.GetValue<List<string>>(FtpWatcherResultArgs.RemoteFilesCollection).Any());
+            Assert.AreEqual(1, watcherResult.WatchingArguments.GetValue<List<string>>(FtpWatcherResultArgs.RemoteFilesCollection).Count);
+
+            var watchedFile = watcherResult.WatchingArguments.GetValue<List<string>>(FtpWatcherResultArgs
+                .RemoteFilesCollection).Single();
+
+            Assert.AreEqual(UriHelper.BuildPath("/", remoteWorkingDir, Path.GetFileName(fileNamePath)), watchedFile);
+        }
+
+        private static string CreateTestFile(string localWriteDir, string prefix = "File", string extension = "txt")
+        {
+            var fileNamePath = Path.Combine(localWriteDir,
+                $"{prefix}{DateTime.Now.ToString("HHmmssfff")}.{extension}");
+            File.WriteAllText(fileNamePath, DateTime.Now.ToString("G"));
+            return fileNamePath;
+        }
+
+        [TestMethod]
+        [TestCategory("Integration Test")]
+        public void WatchForDirectoryTest()
+        {
+            string remoteWorkingDir = "/";
+            FtpWatcher watcher = new FtpWatcher
+            {
+                Id = PluginUtilities.GetUniqueId(),
+                LoggingService = ServicesContainer.ServicesProvider.GetLoggingService(nameof(FtpWatcher)),
+                Host = FtpTestCredentials.Host,
+                Username = FtpTestCredentials.User,
+                Password = FtpTestCredentials.Password,
+                SelectDirectories = true
+            };
+
+
+            var watcherResult = watcher.Watch();
+            Assert.IsNotNull(watcherResult);
+            Assert.AreEqual(true, watcherResult.Result);
+            Assert.IsNotNull(watcherResult.WatchingArguments);
+            Assert.IsTrue(watcherResult.WatchingArguments.HasArgument(FtpWatcherResultArgs.RemoteFilesCollection));
+            Assert.IsTrue(watcherResult.WatchingArguments.GetValue<List<string>>(FtpWatcherResultArgs.RemoteFilesCollection).Any());
+            Assert.AreEqual(1, watcherResult.WatchingArguments.GetValue<List<string>>(FtpWatcherResultArgs.RemoteFilesCollection).Count);
+        }
+
+        [TestMethod]
+        [TestCategory("Integration Test")]
         public void WatchForFilesInDirTest()
         {
             string remoteWorkingDir = "/test";
@@ -95,39 +164,6 @@ namespace Routindo.Plugins.FTP.Tests
                 .RemoteFilesCollection).Single();
 
             Assert.AreEqual(UriHelper.BuildPath("/", remoteWorkingDir, Path.GetFileName(fileNamePath)), watchedFile);
-        }
-
-        private static string CreateTestFile(string localWriteDir)
-        {
-            var fileNamePath = Path.Combine(localWriteDir,
-                $"File{DateTime.Now.ToString("HHmmssfff")}.txt");
-            File.WriteAllText(fileNamePath, DateTime.Now.ToString("G"));
-            return fileNamePath;
-        }
-
-        [TestMethod]
-        [TestCategory("Integration Test")]
-        public void WatchForDirectoryTest()
-        {
-            string remoteWorkingDir = "/";
-            FtpWatcher watcher = new FtpWatcher
-            {
-                Id = PluginUtilities.GetUniqueId(),
-                LoggingService = ServicesContainer.ServicesProvider.GetLoggingService(nameof(FtpWatcher)),
-                Host = FtpTestCredentials.Host,
-                Username = FtpTestCredentials.User,
-                Password = FtpTestCredentials.Password,
-                SelectDirectories = true
-            };
-
-
-            var watcherResult = watcher.Watch();
-            Assert.IsNotNull(watcherResult);
-            Assert.AreEqual(true, watcherResult.Result);
-            Assert.IsNotNull(watcherResult.WatchingArguments);
-            Assert.IsTrue(watcherResult.WatchingArguments.HasArgument(FtpWatcherResultArgs.RemoteFilesCollection));
-            Assert.IsTrue(watcherResult.WatchingArguments.GetValue<List<string>>(FtpWatcherResultArgs.RemoteFilesCollection).Any());
-            Assert.AreEqual(1, watcherResult.WatchingArguments.GetValue<List<string>>(FtpWatcherResultArgs.RemoteFilesCollection).Count);
         }
     }
 }

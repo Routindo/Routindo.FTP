@@ -34,6 +34,7 @@ namespace Routindo.Plugins.FTP.UI.ViewModels
         private bool _filterByEditionTime;
         private string _exampleCreationTimeString;
         private string _exampleEditionTimeString;
+        private string _searchPattern = "*.*";
 
         public FtpItemsSelectorViewModel()
         {
@@ -111,6 +112,16 @@ namespace Routindo.Plugins.FTP.UI.ViewModels
                 _maximumFiles = value;
                 ClearPropertyErrors();
                 ValidateNumber(MaximumFiles, i => i > 0);
+                OnPropertyChanged();
+            }
+        }
+
+        public string SearchPattern
+        {
+            get => _searchPattern;
+            set
+            {
+                _searchPattern = value;
                 OnPropertyChanged();
             }
         }
@@ -491,6 +502,7 @@ namespace Routindo.Plugins.FTP.UI.ViewModels
                 .WithArgument(FtpItemsSelectorArgs.Username, Username)
                 .WithArgument(FtpItemsSelectorArgs.Password, Password)
                 .WithArgument(FtpItemsSelectorArgs.RemoteWorkingDir, RemoteWorkingDir)
+                .WithArgument(FtpItemsSelectorArgs.SearchPattern, SearchPattern)
                 .WithArgument(FtpItemsSelectorArgs.MaximumFiles, MaximumFiles)
                 .WithArgument(FtpItemsSelectorArgs.SelectFiles, true)
                 .WithArgument(FtpItemsSelectorArgs.SelectDirectories, false)
@@ -564,6 +576,9 @@ namespace Routindo.Plugins.FTP.UI.ViewModels
 
             if (arguments.HasArgument(FtpItemsSelectorArgs.RemoteWorkingDir))
                 RemoteWorkingDir = arguments.GetValue<string>(FtpItemsSelectorArgs.RemoteWorkingDir);
+
+            if (arguments.HasArgument(FtpItemsSelectorArgs.SearchPattern))
+                SearchPattern = arguments.GetValue<string>(FtpItemsSelectorArgs.SearchPattern);
 
             if (arguments.HasArgument(FtpItemsSelectorArgs.MaximumFiles))
             {
