@@ -7,8 +7,9 @@ using Routindo.Contract.Watchers;
 
 namespace Routindo.Plugins.FTP.Components.Watchers.Files
 {
-    [PluginItemInfo(ComponentUniqueId, "FTP Remote Watcher",
-         "Watch Remote directory and check if contains items - files or directories -"),
+    [PluginItemInfo(ComponentUniqueId, nameof(FtpWatcher),
+         "Watch Remote directory and check if contains items - files or directories -",
+         Category = "FTP", FriendlyName = "Watch FTP Directory"),
      ResultArgumentsClass(typeof(FtpWatcherResultArgs))]
     public class FtpWatcher: FtpItemsSelector, IWatcher 
     {

@@ -11,8 +11,8 @@ using Routindo.Contract.Services;
 
 namespace Routindo.Plugins.FTP.Components.Actions.Download
 {
-    [PluginItemInfo(ComponentUniqueId, "FTP File Downloader",
-         "Download one or multiple files from remote host via FTP"),
+    [PluginItemInfo(ComponentUniqueId, nameof(FtpDownloadAction),
+         "Download one or multiple files from remote host via FTP", Category = "FTP", FriendlyName = "Download Files"),
      ExecutionArgumentsClass(typeof(FtpDownloadActionExecutionArgs)), 
     ResultArgumentsClass(typeof(FtpDownloadActionResultArgs))
     ]

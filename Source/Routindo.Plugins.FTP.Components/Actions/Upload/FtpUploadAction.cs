@@ -10,8 +10,8 @@ using Routindo.Contract.Services;
 
 namespace Routindo.Plugins.FTP.Components.Actions.Upload
 {
-    [PluginItemInfo(ComponentUniqueId, "FTP Uploader",
-         "Upload a File to remote host via FTP"),
+    [PluginItemInfo(ComponentUniqueId, nameof(FtpUploadAction),
+         "Upload a File to remote host via FTP", Category = "FTP", FriendlyName = "Upload Files"),
      ExecutionArgumentsClass(typeof(FtpUploadActionExecutionArgs))]
     public class FtpUploadAction: IAction
     {
