@@ -322,8 +322,8 @@ namespace Routindo.Plugins.FTP.UI.ViewModels
                     .WithArgument(FtpDownloadActionArgs.Port, Port)
                     .WithArgument(FtpDownloadActionArgs.Username, Username)
                     .WithArgument(FtpDownloadActionArgs.Password, Password)
-                    .WithArgument(FtpDownloadActionArgs.DirectoryPath, DirectoryPath)
                     .WithArgument(FtpDownloadActionArgs.RemoteWorkingDir, RemoteWorkingDir)
+                    .WithArgument(FtpDownloadActionArgs.DirectoryPath, DirectoryPath)
                     .WithArgument(FtpDownloadActionArgs.UseTemporaryName, UseTemporaryName)
                     .WithArgument(FtpDownloadActionArgs.Overwrite, Overwrite)
                     .WithArgument(FtpDownloadActionArgs.Append, Append)
@@ -351,11 +351,11 @@ namespace Routindo.Plugins.FTP.UI.ViewModels
             if (arguments.HasArgument(FtpDownloadActionArgs.Port))
                 Port = arguments.GetValue<int>(FtpDownloadActionArgs.Port);
 
-            if (arguments.HasArgument(FtpDownloadActionArgs.DirectoryPath))
-                DirectoryPath = arguments.GetValue<string>(FtpDownloadActionArgs.DirectoryPath);
-
             if (arguments.HasArgument(FtpDownloadActionArgs.RemoteWorkingDir))
                 RemoteWorkingDir = arguments.GetValue<string>(FtpDownloadActionArgs.RemoteWorkingDir);
+
+            if (arguments.HasArgument(FtpDownloadActionArgs.DirectoryPath))
+                DirectoryPath = arguments.GetValue<string>(FtpDownloadActionArgs.DirectoryPath);
 
             if (arguments.HasArgument(FtpDownloadActionArgs.UseTemporaryName))
                 UseTemporaryName = arguments.GetValue<bool>(FtpDownloadActionArgs.UseTemporaryName);

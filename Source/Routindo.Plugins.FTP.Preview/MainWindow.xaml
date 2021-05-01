@@ -31,6 +31,10 @@
                     </views:FtpWatcherView.DataContext>
                 </views:FtpWatcherView>
             </TabItem>
+
+            <TabItem Header="Delete">
+                <views:DeleteFilesActionView />
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>
