@@ -84,7 +84,11 @@ namespace Routindo.Plugins.FTP.UI.ViewModels
                 Password = arguments.GetValue<string>(FtpDeleteActionArgs.Password);
 
             if (arguments.HasArgument(FtpDeleteActionArgs.Port))
-                Port = arguments.GetValue<int>(FtpDeleteActionArgs.Port);
+            {
+                var port = arguments.GetValue<int>(FtpDeleteActionArgs.Port);
+                if (port > 0)
+                    Port = port;
+            }
 
             if (arguments.HasArgument(FtpDeleteActionArgs.RemoteWorkingDir))
                 RemoteWorkingDir = arguments.GetValue<string>(FtpDeleteActionArgs.RemoteWorkingDir);

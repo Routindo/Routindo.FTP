@@ -13,6 +13,7 @@ namespace Routindo.Plugins.FTP.Components.Actions.Upload
     [PluginItemInfo(ComponentUniqueId, nameof(FtpUploadAction),
          "Upload a File to remote host via FTP", Category = "FTP", FriendlyName = "Upload Files"),
      ExecutionArgumentsClass(typeof(FtpUploadActionExecutionArgs))]
+    [ResultArgumentsClass(typeof(FtpUploadActionResultsArgs))]
     public class FtpUploadAction: IAction
     {
         public const string ComponentUniqueId = "D911DBBC-22D2-4E85-8880-D50D8618B049";
@@ -126,6 +127,8 @@ namespace Routindo.Plugins.FTP.Components.Actions.Upload
         /// <returns></returns>
         public ActionResult Execute(ArgumentCollection arguments)
         {
+            List<string> sourceFiles = new List<string>();
+            List<string> uploadedFiles = new List<string>();
             try
             {
 
@@ -140,7 +143,7 @@ namespace Routindo.Plugins.FTP.Components.Actions.Upload
                     throw new ArgumentsValidationException(
                         $"unable to cast argument value into list of string. key({FtpUploadActionExecutionArgs.SourceFilesCollection})");
 
-
+                sourceFiles = filePaths;
                 foreach (var sourceFilePath in filePaths)
                 {
                     LoggingService.Debug($"Uploading file {sourceFilePath}");
@@ -226,6 +229,7 @@ namespace Routindo.Plugins.FTP.Components.Actions.Upload
                             string finalRemotePath = UriHelper.BuildPath(DestinationFolderPath, finalFileName);
                             
                             ftpClient.Rename(tempRemotePath, finalRemotePath);
+                            uploadedFiles.Add(finalRemotePath);
                         }
                     }
                     catch (Exception exception)
@@ -255,12 +259,18 @@ namespace Routindo.Plugins.FTP.Components.Actions.Upload
                     }
                 }
 
-                return ActionResult.Succeeded();
+                return ActionResult.Succeeded().WithAdditionInformation(ArgumentCollection.New()
+                    .WithArgument(FtpUploadActionResultsArgs.SourceFilesPaths, filePaths)
+                    .WithArgument(FtpUploadActionResultsArgs.UploadedFiles, uploadedFiles)
+                );
             }
             catch (Exception exception)
             {
                 LoggingService.Error(exception);
-                return ActionResult.Failed().WithException(exception);
+                return ActionResult.Failed().WithException(exception).WithAdditionInformation(ArgumentCollection.New()
+                    .WithArgument(FtpUploadActionResultsArgs.SourceFilesPaths, sourceFiles)
+                    .WithArgument(FtpUploadActionResultsArgs.UploadedFiles, uploadedFiles)
+                );
             }
         }
     }

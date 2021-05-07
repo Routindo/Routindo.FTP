@@ -349,7 +349,11 @@ namespace Routindo.Plugins.FTP.UI.ViewModels
                 Password = arguments.GetValue<string>(FtpDownloadActionArgs.Password);
 
             if (arguments.HasArgument(FtpDownloadActionArgs.Port))
-                Port = arguments.GetValue<int>(FtpDownloadActionArgs.Port);
+            {
+                var port = arguments.GetValue<int>(FtpDownloadActionArgs.Port);
+                if (port > 0)
+                    Port = port;
+            }
 
             if (arguments.HasArgument(FtpDownloadActionArgs.RemoteWorkingDir))
                 RemoteWorkingDir = arguments.GetValue<string>(FtpDownloadActionArgs.RemoteWorkingDir);

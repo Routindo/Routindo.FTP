@@ -170,7 +170,11 @@ namespace Routindo.Plugins.FTP.UI.ViewModels
                 Password = arguments.GetValue<string>(FtpUploadActionInstanceArgs.Password);
 
             if (arguments.HasArgument(FtpUploadActionInstanceArgs.Port))
-                Port = arguments.GetValue<int>(FtpUploadActionInstanceArgs.Port);
+            {
+                var port = arguments.GetValue<int>(FtpUploadActionInstanceArgs.Port);
+                if (port > 0)
+                    Port = port;
+            }
 
             if (arguments.HasArgument(FtpUploadActionInstanceArgs.DestinationFileName))
                 DestinationFileName = arguments.GetValue<string>(FtpUploadActionInstanceArgs.DestinationFileName);

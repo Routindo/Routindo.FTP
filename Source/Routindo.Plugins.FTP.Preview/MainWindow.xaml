@@ -35,6 +35,10 @@
             <TabItem Header="Delete">
                 <views:DeleteFilesActionView />
             </TabItem>
+
+            <TabItem Header="Move">
+                <views:MoveFilesActionView />
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>
